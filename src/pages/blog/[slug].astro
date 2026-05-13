@@ -62,8 +62,8 @@ const nextPost = sortedPosts[postIndex - 1];
       </div>
     </header>
 
-    <section class="sec">
-      <div class="markdown-body" dangerouslySetInnerHTML={post.body}></div>
+    <section class="sec markdown-body">
+      {post.body}
     </section>
 
     {relatedPosts.length > 0 && (

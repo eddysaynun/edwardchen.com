@@ -1,0 +1,25 @@
+---
+interface Props {
+  html: string;
+}
+
+const { html } = Astro.props;
+// Escape HTML for safe embedding in script tag
+const escapedHtml = html
+  .replace(/\\/g, '\\\\')
+  .replace(/'/g, "\\'")
+  .replace(/"/g, '\\"')
+  .replace(/\n/g, '\\n')
+  .replace(/\r/g, '\\r');
+---
+
+<div class="markdown-body"></div>
+
+<script>
+  (function() {
+    const container = document.currentScript.previousElementSibling;
+    container.innerHTML = `
+${escapedHtml}
+`;
+  })();
+</script>

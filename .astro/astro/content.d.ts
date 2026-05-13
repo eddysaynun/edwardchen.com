@@ -1,4 +1,15 @@
 declare module 'astro:content' {
+	interface Render {
+		'.mdx': Promise<{
+			Content: import('astro').MarkdownInstance<{}>['Content'];
+			headings: import('astro').MarkdownHeading[];
+			remarkPluginFrontmatter: Record<string, any>;
+			components: import('astro').MDXInstance<{}>['components'];
+		}>;
+	}
+}
+
+declare module 'astro:content' {
 	interface RenderResult {
 		Content: import('astro/runtime/server/index.js').AstroComponentFactory;
 		headings: import('astro').MarkdownHeading[];
@@ -141,20 +152,20 @@ declare module 'astro:content' {
 
 	type ContentEntryMap = {
 		"blog": {
-"ai-agent-workflow.md": {
-	id: "ai-agent-workflow.md";
+"ai-agent-workflow.mdx": {
+	id: "ai-agent-workflow.mdx";
   slug: "ai-agent-workflow";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
-"astro-blog-setup.md": {
-	id: "astro-blog-setup.md";
+} & { render(): Render[".mdx"] };
+"astro-blog-setup.mdx": {
+	id: "astro-blog-setup.mdx";
   slug: "astro-blog-setup";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
+} & { render(): Render[".mdx"] };
 };
 
 	};
