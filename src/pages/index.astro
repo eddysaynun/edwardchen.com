@@ -1,5 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// 获取所有博客文章，按日期排序
+const allPosts = (await getCollection('blog')).sort((a, b) => {
+  const dateA = a.data.pubDate || new Date(0);
+  const dateB = b.data.pubDate || new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+// 获取最新的 3 篇文章
+const latestPosts = allPosts.slice(0, 3);
 ---
 
 <Layout title="~/edward — 构建事物的笔记">
@@ -49,59 +60,27 @@ import Layout from '../layouts/Layout.astro';
     </div>
 
     <ol class="posts">
-      <!-- Post 1 -->
-      <li class="post">
-        <time class="date" datetime="2025-05-10">2025-05-10</time>
-        <div class="body">
-          <h3>
-            <a href="/blog/astro-blog-setup">从零搭建 Astro 个人博客</a>
-          </h3>
-          <p>使用 Astro + TailwindCSS 构建一个现代化的静态博客，支持 Markdown 写作和自动部署。</p>
-          <div class="row">
-            <span class="pill">Astro</span>
-            <span class="pill">博客</span>
+      {latestPosts.map((post) => (
+        <li class={`post ${post.data.pinned ? 'pinned' : ''}`}>
+          <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
+            {post.data.pubDate?.toLocaleDateString('zh-CN')}
+          </time>
+          <div class="body">
+            <h3>
+              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+            </h3>
+            <p>{post.data.description}</p>
+            <div class="row">
+              {post.data.tags.map((tag) => (
+                <span class="pill">{tag}</span>
+              ))}
+            </div>
           </div>
-        </div>
-        <div class="meta-r">
-          <span class="arrow">→</span>
-        </div>
-      </li>
-
-      <!-- Post 2 -->
-      <li class="post">
-        <time class="date" datetime="2025-05-08">2025-05-08</time>
-        <div class="body">
-          <h3>
-            <a href="/blog/ai-agent-workflow">AI Agent 工作流实践</a>
-          </h3>
-          <p>探索如何使用 AI Agent 自动化日常开发任务，提升工作效率。</p>
-          <div class="row">
-            <span class="pill">AI</span>
-            <span class="pill">自动化</span>
+          <div class="meta-r">
+            <span class="arrow">→</span>
           </div>
-        </div>
-        <div class="meta-r">
-          <span class="arrow">→</span>
-        </div>
-      </li>
-
-      <!-- Post 3 -->
-      <li class="post">
-        <time class="date" datetime="2025-05-01">2025-05-01</time>
-        <div class="body">
-          <h3>
-            <a href="/blog/docker-k8s-notes">Docker 和 K8s 学习笔记</a>
-          </h3>
-          <p>整理容器化和 Kubernetes 的核心概念与最佳实践。</p>
-          <div class="row">
-            <span class="pill">Docker</span>
-            <span class="pill">K8s</span>
-          </div>
-        </div>
-        <div class="meta-r">
-          <span class="arrow">→</span>
-        </div>
-      </li>
+        </li>
+      ))}
     </ol>
   </section>
 
@@ -182,7 +161,7 @@ import Layout from '../layouts/Layout.astro';
         </li>
         <li>
           <span class="b">2</span>
-          <span class="t">学习 Astro 的内容集合功能</span>
+          <span class="t">实现 Markdown 内容集合</span>
         </li>
         <li>
           <span class="b">3</span>

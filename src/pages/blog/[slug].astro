@@ -1,0 +1,118 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { RemarkPluginFrontmatter } from 'remark-frontmatter';
+
+// 获取所有博客文章生成静态路径
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+// 获取当前文章
+const allPosts = await getCollection('blog');
+const post = allPosts.find(p => p.slug === slug);
+
+if (!post) {
+  Astro.redirect('/blog');
+}
+
+// 获取相关文章（按标签匹配）
+const relatedPosts = allPosts
+  .filter(p => {
+    if (p.slug === slug) return false;
+    return p.data.tags.some(tag => post.data.tags.includes(tag));
+  })
+  .slice(0, 3);
+
+// 按日期排序用于上一篇下一篇
+const sortedPosts = allPosts.sort((a, b) => {
+  const dateA = a.data.pubDate || new Date(0);
+  const dateB = b.data.pubDate || new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+const postIndex = sortedPosts.findIndex(p => p.slug === slug);
+const prevPost = sortedPosts[postIndex + 1];
+const nextPost = sortedPosts[postIndex - 1];
+---
+
+<Layout title={`${post.data.title} - Edward Chen`}>
+  <article class="rise">
+    <!-- Post Header -->
+    <header class="hero">
+      <div class="meta">
+        <time datetime={post.data.pubDate?.toISOString() || ''}>
+          {post.data.pubDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '未发布'}
+        </time>
+        <span>•</span>
+        <span>{Math.ceil(post.body.length / 500)} 分钟阅读</span>
+        {post.data.pinned && (
+          <>
+            <span>•</span>
+            <span class="text-accent font-medium">置顶</span>
+          </>
+        )}
+      </div>
+      
+      <h1>{post.data.title}</h1>
+      
+      <p class="lede mb-6">{post.data.description}</p>
+      
+      <div class="row">
+        {post.data.tags.map((tag) => (
+          <span class="pill">{tag}</span>
+        ))}
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <section class="sec">
+      <div class="markdown-body">
+        <div dangerouslySetInnerHTML={{ __html: post.body }} />
+      </div>
+    </section>
+
+    <!-- Related Posts -->
+    {relatedPosts.length > 0 && (
+      <section class="sec">
+        <div class="sec-head">
+          <h2>相关文章</h2>
+        </div>
+        <div class="projects">
+          {relatedPosts.map((relatedPost) => (
+            <article class="project">
+              <h4>
+                <a href={`/blog/${relatedPost.slug}`}>{relatedPost.data.title}</a>
+              </h4>
+              <p>{relatedPost.data.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Navigation -->
+    <nav class="sec flex justify-between items-center flex-wrap gap-4">
+      {prevPost ? (
+        <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+          ← 上一篇：{prevPost.data.title}
+        </a>
+      ) : (
+        <a href="/blog" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+          ← 返回文章列表
+        </a>
+      )}
+      
+      {nextPost && (
+        <a href={`/blog/${nextPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+          下一篇：{nextPost.data.title} →
+        </a>
+      )}
+    </nav>
+  </article>
+</Layout>

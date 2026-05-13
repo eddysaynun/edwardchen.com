@@ -1,53 +1,28 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-interface BlogPost {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  tags: string[];
-}
+// 获取所有博客文章
+const allPosts = await getCollection('blog');
 
-const posts: BlogPost[] = [
-  {
-    slug: 'astro-blog-setup',
-    title: '从零搭建 Astro 个人博客',
-    description: '使用 Astro + TailwindCSS 构建一个现代化的静态博客，支持 Markdown 写作和自动部署。',
-    date: '2025-05-10',
-    tags: ['Astro', '博客', '静态站点']
-  },
-  {
-    slug: 'ai-agent-workflow',
-    title: 'AI Agent 工作流实践',
-    description: '探索如何使用 AI Agent 自动化日常开发任务，提升工作效率。',
-    date: '2025-05-08',
-    tags: ['AI', '自动化', '生产力']
-  },
-  {
-    slug: 'docker-k8s-notes',
-    title: 'Docker 和 K8s 学习笔记',
-    description: '整理容器化和 Kubernetes 的核心概念与最佳实践。',
-    date: '2025-05-01',
-    tags: ['Docker', 'Kubernetes', 'DevOps']
-  },
-  {
-    slug: 'rag-fundamentals',
-    title: 'RAG 技术原理解析',
-    description: '深入理解检索增强生成的工作原理和实现细节。',
-    date: '2025-04-25',
-    tags: ['RAG', 'AI', '向量数据库']
-  },
-  {
-    slug: 'typescript-best-practices',
-    title: 'TypeScript 最佳实践',
-    description: '分享在大型项目中使用 TypeScript 的经验与技巧。',
-    date: '2025-04-18',
-    tags: ['TypeScript', '前端', '最佳实践']
-  }
-];
+// 按日期排序
+const posts = allPosts.sort((a, b) => {
+  const dateA = a.data.pubDate || new Date(0);
+  const dateB = b.data.pubDate || new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
 
-const allTags = Array.from(new Set(posts.flatMap(p => p.tags))).sort();
+// 提取所有标签
+const tagCounts: Record<string, number> = {};
+posts.forEach(post => {
+  post.data.tags.forEach(tag => {
+    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+  });
+});
+
+const allTags = Object.entries(tagCounts)
+  .sort((a, b) => b[1] - a[1])
+  .map(([tag]) => tag);
 ---
 
 <Layout title="文章 - Edward Chen">
@@ -68,15 +43,12 @@ const allTags = Array.from(new Set(posts.flatMap(p => p.tags))).sort();
         全部
         <span class="ct">({posts.length})</span>
       </button>
-      {allTags.map((tag) => {
-        const count = posts.filter(p => p.tags.includes(tag)).length;
-        return (
-          <button class="tag">
-            {tag}
-            <span class="ct">({count})</span>
-          </button>
-        );
-      })}
+      {allTags.map((tag) => (
+        <button class="tag">
+          {tag}
+          <span class="ct">({tagCounts[tag]})</span>
+        </button>
+      ))}
     </div>
   </section>
 
@@ -84,15 +56,17 @@ const allTags = Array.from(new Set(posts.flatMap(p => p.tags))).sort();
   <section class="sec rise d2">
     <ol class="posts">
       {posts.map((post) => (
-        <li class="post">
-          <time class="date" datetime={post.date}>{post.date}</time>
+        <li class={`post ${post.data.pinned ? 'pinned' : ''}`}>
+          <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
+            {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
+          </time>
           <div class="body">
             <h3>
-              <a href={`/blog/${post.slug}`}>{post.title}</a>
+              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
             </h3>
-            <p>{post.description}</p>
+            <p>{post.data.description}</p>
             <div class="row">
-              {post.tags.map((tag) => (
+              {post.data.tags.map((tag) => (
                 <span class="pill">{tag}</span>
               ))}
             </div>
