@@ -1,0 +1,120 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface BlogPost {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  tags: string[];
+}
+
+const posts: BlogPost[] = [
+  {
+    slug: 'astro-blog-setup',
+    title: '从零搭建 Astro 个人博客',
+    description: '使用 Astro + TailwindCSS 构建一个现代化的静态博客，支持 Markdown 写作和自动部署。',
+    date: '2025-05-10',
+    tags: ['Astro', '博客', '静态站点']
+  },
+  {
+    slug: 'ai-agent-workflow',
+    title: 'AI Agent 工作流实践',
+    description: '探索如何使用 AI Agent 自动化日常开发任务，提升工作效率。',
+    date: '2025-05-08',
+    tags: ['AI', '自动化', '生产力']
+  },
+  {
+    slug: 'docker-k8s-notes',
+    title: 'Docker 和 K8s 学习笔记',
+    description: '整理容器化和 Kubernetes 的核心概念与最佳实践。',
+    date: '2025-05-01',
+    tags: ['Docker', 'Kubernetes', 'DevOps']
+  },
+  {
+    slug: 'rag-fundamentals',
+    title: 'RAG 技术原理解析',
+    description: '深入理解检索增强生成的工作原理和实现细节。',
+    date: '2025-04-25',
+    tags: ['RAG', 'AI', '向量数据库']
+  },
+  {
+    slug: 'typescript-best-practices',
+    title: 'TypeScript 最佳实践',
+    description: '分享在大型项目中使用 TypeScript 的经验与技巧。',
+    date: '2025-04-18',
+    tags: ['TypeScript', '前端', '最佳实践']
+  }
+];
+---
+
+<Layout title="文章 - Edward 的博客">
+  <section class="py-16 pb-10">
+    <div class="flex items-center gap-2.5 font-mono text-[11.5px] text-stone-500 mb-5.5">
+      <span>技术笔记 · 学习记录 · 项目经验</span>
+    </div>
+    
+    <h1 class="font-sans text-[34px] leading-[1.18] tracking-tight font-semibold mb-4.5 text-stone-900">
+      文章
+    </h1>
+    
+    <p class="text-base text-stone-500 max-w-[56ch]">
+      记录技术探索、项目经验和学习心得。
+    </p>
+  </section>
+
+  <!-- Tags Filter -->
+  <section class="pt-9 pb-7 border-t border-stone-200 mb-6">
+    <div class="flex flex-wrap gap-1.5 mb-3.5 font-mono text-[11.5px]">
+      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all bg-stone-900 text-stone-50 border-stone-900">
+        全部
+        <span class="text-stone-400 text-[10px]">(5)</span>
+      </button>
+      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
+        AI
+        <span class="text-stone-400 text-[10px]">(2)</span>
+      </button>
+      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
+        Astro
+        <span class="text-stone-400 text-[10px]">(1)</span>
+      </button>
+      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
+        Docker
+        <span class="text-stone-400 text-[10px]">(1)</span>
+      </button>
+      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
+        TypeScript
+        <span class="text-stone-400 text-[10px]">(1)</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Posts List -->
+  <section class="pt-9 pb-7 border-t border-stone-200">
+    <ol class="list-none p-0 m-0">
+      {posts.map((post) => (
+        <li class="grid grid-cols-[84px_1fr_auto] gap-5.5 items-baseline py-4.5 border-b border-stone-200 cursor-default relative group hover:bg-stone-50 -mx-3 px-3 rounded-lg transition-colors">
+          <time class="font-mono text-[11.5px] text-stone-400 tabular-nums pt-0.5">{post.date}</time>
+          <div class="body">
+            <h3 class="m-0 mb-1 text-base leading-[1.35] font-medium tracking-tight text-stone-900">
+              <a href={`/blog/${post.slug}`} class="text-inherit no-underline bg-[linear-gradient(theme(colors.orange.600),theme(colors.orange.600))] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] group-hover:bg-[length:100%_1px]">
+                {post.title}
+              </a>
+            </h3>
+            <p class="m-0 text-stone-500 text-[13.5px] leading-[1.55]">
+              {post.description}
+            </p>
+            <div class="flex items-center gap-2.5 mt-1.75 font-mono text-[11px] text-stone-400">
+              {post.tags.map((tag) => (
+                <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">{tag}</span>
+              ))}
+            </div>
+          </div>
+          <div class="text-right font-mono text-[11px] text-stone-400 whitespace-nowrap pt-1">
+            <span class="inline-block opacity-0 translate-x-[-4px] transition-all group-hover:opacity-100 group-hover:translate-x-0 text-orange-600">→</span>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+</Layout>
