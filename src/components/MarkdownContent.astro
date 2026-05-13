@@ -4,22 +4,18 @@ interface Props {
 }
 
 const { html } = Astro.props;
-// Escape HTML for safe embedding in script tag
-const escapedHtml = html
-  .replace(/\\/g, '\\\\')
-  .replace(/'/g, "\\'")
-  .replace(/"/g, '\\"')
-  .replace(/\n/g, '\\n')
-  .replace(/\r/g, '\\r');
+
+// Use unified to render markdown to HTML
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
+
+const processed = await unified()
+  .use(remarkParse)
+  .use(remarkRehype)
+  .use(rehypeStringify)
+  .process(html);
 ---
 
-<div class="markdown-body"></div>
-
-<script>
-  (function() {
-    const container = document.currentScript.previousElementSibling;
-    container.innerHTML = `
-${escapedHtml}
-`;
-  })();
-</script>
+<div class="markdown-body" dangerouslySetInnerHTML={processed.result as any}></div>

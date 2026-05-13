@@ -1,7 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
-import MarkdownRenderer from '../../components/MarkdownRenderer.astro';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -35,6 +38,15 @@ const sortedPosts = allPosts.sort((a, b) => {
 const postIndex = sortedPosts.findIndex(p => p.slug === slug);
 const prevPost = sortedPosts[postIndex + 1];
 const nextPost = sortedPosts[postIndex - 1];
+
+// Render markdown to HTML using unified + remark
+const markdownHtml = await unified()
+  .use(remarkParse)
+  .use(remarkRehype)
+  .use(rehypeStringify)
+  .process(post.body);
+
+const htmlContent = markdownHtml.value?.toString() || '';
 ---
 
 <Layout title={`${post.data.title} - Edward Chen`}>
@@ -66,7 +78,7 @@ const nextPost = sortedPosts[postIndex - 1];
 
     <section class="sec">
       <div class="markdown-body">
-        <MarkdownRenderer content={post.body} />
+        <div set:html={htmlContent}></div>
       </div>
     </section>
 
