@@ -1,9 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
-import { RemarkPluginFrontmatter } from 'remark-frontmatter';
 
-// 获取所有博客文章生成静态路径
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
@@ -12,8 +10,6 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-
-// 获取当前文章
 const allPosts = await getCollection('blog');
 const post = allPosts.find(p => p.slug === slug);
 
@@ -21,7 +17,6 @@ if (!post) {
   Astro.redirect('/blog');
 }
 
-// 获取相关文章（按标签匹配）
 const relatedPosts = allPosts
   .filter(p => {
     if (p.slug === slug) return false;
@@ -29,7 +24,6 @@ const relatedPosts = allPosts
   })
   .slice(0, 3);
 
-// 按日期排序用于上一篇下一篇
 const sortedPosts = allPosts.sort((a, b) => {
   const dateA = a.data.pubDate || new Date(0);
   const dateB = b.data.pubDate || new Date(0);
@@ -43,14 +37,13 @@ const nextPost = sortedPosts[postIndex - 1];
 
 <Layout title={`${post.data.title} - Edward Chen`}>
   <article class="rise">
-    <!-- Post Header -->
     <header class="hero">
       <div class="meta">
         <time datetime={post.data.pubDate?.toISOString() || ''}>
           {post.data.pubDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '未发布'}
         </time>
         <span>•</span>
-        <span>{Math.ceil(post.body.length / 500)} 分钟阅读</span>
+        <span>约 {Math.max(1, Math.ceil(post.body.length / 500))} 分钟阅读</span>
         {post.data.pinned && (
           <>
             <span>•</span>
@@ -60,7 +53,6 @@ const nextPost = sortedPosts[postIndex - 1];
       </div>
       
       <h1>{post.data.title}</h1>
-      
       <p class="lede mb-6">{post.data.description}</p>
       
       <div class="row">
@@ -70,14 +62,10 @@ const nextPost = sortedPosts[postIndex - 1];
       </div>
     </header>
 
-    <!-- Post Content -->
     <section class="sec">
-      <div class="markdown-body">
-        <div dangerouslySetInnerHTML={{ __html: post.body }} />
-      </div>
+      <div class="markdown-body" dangerouslySetInnerHTML={post.body}></div>
     </section>
 
-    <!-- Related Posts -->
     {relatedPosts.length > 0 && (
       <section class="sec">
         <div class="sec-head">
@@ -96,7 +84,6 @@ const nextPost = sortedPosts[postIndex - 1];
       </section>
     )}
 
-    <!-- Navigation -->
     <nav class="sec flex justify-between items-center flex-wrap gap-4">
       {prevPost ? (
         <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
