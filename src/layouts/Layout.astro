@@ -4,50 +4,61 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "个人博客 - 技术、AI、生活" } = Astro.props;
+const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+    
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="/styles/global.css" />
   </head>
-  <body class="min-h-screen bg-stone-50 text-stone-900 font-sans">
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-stone-50/75 border-b border-stone-200">
-      <div class="max-w-4xl mx-auto px-7 py-3.5 flex items-center justify-between gap-4">
-        <a href="/" class="inline-flex items-center gap-2.5 font-mono text-sm font-medium text-stone-900 hover:text-stone-700 transition-colors">
-          <span class="w-4.5 h-4.5 rounded bg-stone-900 flex items-center justify-center text-stone-50 text-[10px] font-bold shadow-[0_0_0_3px_var(--bg),0_0_0_4px_rgba(28,26,23,.22)]">
-            ~
-          </span>
-          <span>edward</span>
-          <span class="inline-block w-1.5 h-3 bg-orange-500 animate-pulse" aria-hidden="true"></span>
-        </a>
-        
-        <nav class="flex items-center gap-1">
-          <a href="/" class="font-mono text-[12px] text-stone-500 hover:text-stone-900 hover:bg-stone-100 px-2.5 py-1.5 rounded transition-colors">首页</a>
-          <a href="/blog" class="font-mono text-[12px] text-stone-500 hover:text-stone-900 hover:bg-stone-100 px-2.5 py-1.5 rounded transition-colors">文章</a>
-          <a href="/projects" class="font-mono text-[12px] text-stone-500 hover:text-stone-900 hover:bg-stone-100 px-2.5 py-1.5 rounded transition-colors">项目</a>
-          <a href="/about" class="font-mono text-[12px] text-stone-500 hover:text-stone-900 hover:bg-stone-100 px-2.5 py-1.5 rounded transition-colors">关于</a>
-        </nav>
-      </div>
-    </header>
+  <body>
+    <div class="wrap">
+      <!-- Header -->
+      <header class="site">
+        <div class="site-inner">
+          <a href="/" class="brand">
+            <span class="glyph">~</span>
+            <span>edward</span>
+            <span class="cursor"></span>
+          </a>
+          
+          <nav class="top">
+            <a href="/" class={Astro.url.pathname === '/' ? 'active' : ''}>首页</a>
+            <a href="/blog" class={Astro.url.pathname.startsWith('/blog') ? 'active' : ''}>文章</a>
+            <a href="/projects" class={Astro.url.pathname === '/projects' ? 'active' : ''}>项目</a>
+            <a href="/about" class={Astro.url.pathname === '/about' ? 'active' : ''}>关于</a>
+          </nav>
+        </div>
+      </header>
 
-    <main class="max-w-4xl mx-auto px-7 relative z-10">
-      <slot />
-    </main>
+      <!-- Main Content -->
+      <main>
+        <slot />
+      </main>
 
-    <footer class="max-w-4xl mx-auto px-7 mt-24 pt-7 border-t border-stone-200 pb-14 font-mono text-[11.5px] text-stone-500 flex justify-between gap-3 flex-wrap">
-      <span>© 2025 Edward</span>
-      <div class="flex gap-3">
-        <a href="https://github.com" target="_blank" rel="noopener" class="text-stone-500 hover:text-stone-900 transition-colors">GitHub</a>
-        <a href="https://twitter.com" target="_blank" rel="noopener" class="text-stone-500 hover:text-stone-900 transition-colors">Twitter</a>
-        <a href="mailto:hello@example.com" class="text-stone-500 hover:text-stone-900 transition-colors">Email</a>
-      </div>
-    </footer>
+      <!-- Footer -->
+      <footer class="site">
+        <span>© 2025 Edward Chen</span>
+        <div class="links">
+          <a href="https://github.com/eddysaynun" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://twitter.com" target="_blank" rel="noopener">Twitter</a>
+          <a href="mailto:chenzijian@dipeak.com">Email</a>
+        </div>
+      </footer>
+    </div>
   </body>
 </html>

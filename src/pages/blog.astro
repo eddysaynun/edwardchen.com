@@ -46,72 +46,59 @@ const posts: BlogPost[] = [
     tags: ['TypeScript', '前端', '最佳实践']
   }
 ];
+
+const allTags = Array.from(new Set(posts.flatMap(p => p.tags))).sort();
 ---
 
-<Layout title="文章 - Edward 的博客">
-  <section class="py-16 pb-10">
-    <div class="flex items-center gap-2.5 font-mono text-[11.5px] text-stone-500 mb-5.5">
+<Layout title="文章 - Edward Chen">
+  <section class="hero rise">
+    <div class="meta">
       <span>技术笔记 · 学习记录 · 项目经验</span>
     </div>
     
-    <h1 class="font-sans text-[34px] leading-[1.18] tracking-tight font-semibold mb-4.5 text-stone-900">
-      文章
-    </h1>
+    <h1>文章</h1>
     
-    <p class="text-base text-stone-500 max-w-[56ch]">
-      记录技术探索、项目经验和学习心得。
-    </p>
+    <p class="lede">记录技术探索、项目经验和学习心得。</p>
   </section>
 
   <!-- Tags Filter -->
-  <section class="pt-9 pb-7 border-t border-stone-200 mb-6">
-    <div class="flex flex-wrap gap-1.5 mb-3.5 font-mono text-[11.5px]">
-      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all bg-stone-900 text-stone-50 border-stone-900">
+  <section class="sec rise d1">
+    <div class="tags">
+      <button class="tag on">
         全部
-        <span class="text-stone-400 text-[10px]">(5)</span>
+        <span class="ct">({posts.length})</span>
       </button>
-      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
-        AI
-        <span class="text-stone-400 text-[10px]">(2)</span>
-      </button>
-      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
-        Astro
-        <span class="text-stone-400 text-[10px]">(1)</span>
-      </button>
-      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
-        Docker
-        <span class="text-stone-400 text-[10px]">(1)</span>
-      </button>
-      <button class="appearance-none bg-transparent cursor-pointer border border-stone-300 text-stone-500 px-2.25 py-1 rounded-[999px] inline-flex items-center gap-1.5 hover:text-stone-900 hover:border-stone-700 transition-all">
-        TypeScript
-        <span class="text-stone-400 text-[10px]">(1)</span>
-      </button>
+      {allTags.map((tag) => {
+        const count = posts.filter(p => p.tags.includes(tag)).length;
+        return (
+          <button class="tag">
+            {tag}
+            <span class="ct">({count})</span>
+          </button>
+        );
+      })}
     </div>
   </section>
 
   <!-- Posts List -->
-  <section class="pt-9 pb-7 border-t border-stone-200">
-    <ol class="list-none p-0 m-0">
+  <section class="sec rise d2">
+    <ol class="posts">
       {posts.map((post) => (
-        <li class="grid grid-cols-[84px_1fr_auto] gap-5.5 items-baseline py-4.5 border-b border-stone-200 cursor-default relative group hover:bg-stone-50 -mx-3 px-3 rounded-lg transition-colors">
-          <time class="font-mono text-[11.5px] text-stone-400 tabular-nums pt-0.5">{post.date}</time>
+        <li class="post">
+          <time class="date" datetime={post.date}>{post.date}</time>
           <div class="body">
-            <h3 class="m-0 mb-1 text-base leading-[1.35] font-medium tracking-tight text-stone-900">
-              <a href={`/blog/${post.slug}`} class="text-inherit no-underline bg-[linear-gradient(theme(colors.orange.600),theme(colors.orange.600))] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] group-hover:bg-[length:100%_1px]">
-                {post.title}
-              </a>
+            <h3>
+              <a href={`/blog/${post.slug}`}>{post.title}</a>
             </h3>
-            <p class="m-0 text-stone-500 text-[13.5px] leading-[1.55]">
-              {post.description}
-            </p>
-            <div class="flex items-center gap-2.5 mt-1.75 font-mono text-[11px] text-stone-400">
+            <p>{post.description}</p>
+            <div class="row">
               {post.tags.map((tag) => (
-                <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">{tag}</span>
+                <span class="pill">{tag}</span>
               ))}
             </div>
           </div>
-          <div class="text-right font-mono text-[11px] text-stone-400 whitespace-nowrap pt-1">
-            <span class="inline-block opacity-0 translate-x-[-4px] transition-all group-hover:opacity-100 group-hover:translate-x-0 text-orange-600">→</span>
+          <div class="meta-r">
+            <span class="arrow">→</span>
           </div>
         </li>
       ))}

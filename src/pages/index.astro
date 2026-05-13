@@ -4,39 +4,37 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="~/edward — 构建事物的笔记">
   <!-- Hero Section -->
-  <section class="py-16 pb-10">
-    <div class="flex items-center gap-2.5 font-mono text-[11.5px] text-stone-500 mb-5.5">
-      <span class="w-1.75 h-1.75 rounded-full bg-green-500 relative">
-        <span class="absolute inset-[-3px] rounded-full bg-green-500/25 animate-ping"></span>
-      </span>
+  <section class="hero rise">
+    <div class="meta">
+      <span class="dot"></span>
       <span>个人开发者 · AI 爱好者 · 技术写作者</span>
     </div>
     
-    <h1 class="font-sans text-[34px] leading-[1.18] tracking-tight font-semibold mb-4.5 text-stone-900">
-      你好，我是 <em class="font-serif italic font-normal text-stone-700">Edward</em>
-      <span class="font-mono font-medium text-sm text-orange-600 bg-orange-100 px-1 rounded mx-1">v2.0</span>
+    <h1>
+      你好，我是 <em>Edward</em>
+      <span class="mono">v2.0</span>
     </h1>
     
-    <p class="text-base text-stone-500 max-w-[56ch]">
+    <p class="lede">
       我喜欢构建有趣的东西，探索 AI 的可能性，并分享我的学习旅程。这里是我的技术笔记、项目展示和思考记录。
     </p>
     
-    <div class="mt-6.5 flex flex-wrap gap-4.5 font-mono text-[12.5px]">
-      <a href="/blog" class="text-stone-700 hover:text-orange-600 border-b border-dashed border-stone-300 hover:border-orange-600 pb-0.5 transition-colors inline-flex items-center gap-1.5">
+    <div class="links">
+      <a href="/blog">
         阅读文章
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" class="opacity-70">
+        <svg viewBox="0 0 13 13" fill="none">
           <path d="M2.5 6.5H10.5M10.5 6.5L7 3M10.5 6.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <a href="/projects" class="text-stone-700 hover:text-orange-600 border-b border-dashed border-stone-300 hover:border-orange-600 pb-0.5 transition-colors inline-flex items-center gap-1.5">
+      <a href="/projects">
         查看项目
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" class="opacity-70">
+        <svg viewBox="0 0 13 13" fill="none">
           <path d="M2.5 6.5H10.5M10.5 6.5L7 3M10.5 6.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <a href="https://github.com" target="_blank" rel="noopener" class="text-stone-700 hover:text-orange-600 border-b border-dashed border-stone-300 hover:border-orange-600 pb-0.5 transition-colors inline-flex items-center gap-1.5">
+      <a href="https://github.com/eddysaynun" target="_blank" rel="noopener">
         GitHub
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" class="opacity-70">
+        <svg viewBox="0 0 13 13" fill="none">
           <path d="M6.5 2.5V6.5M6.5 6.5L4 4M6.5 6.5L9 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
@@ -44,178 +42,159 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- Latest Posts -->
-  <section class="pt-9 pb-7 border-t border-stone-200">
-    <div class="flex items-end justify-between mb-4.5 gap-3">
-      <h2 class="font-mono text-[12px] font-medium text-stone-500 tracking-wide mb-0 lowercase">// 最新文章</h2>
-      <a href="/blog" class="font-mono text-[11.5px] text-stone-400 hover:text-stone-600 transition-colors">查看全部 →</a>
+  <section class="sec rise d1">
+    <div class="sec-head">
+      <h2>最新文章</h2>
+      <span class="aux"><a href="/blog">查看全部 →</a></span>
     </div>
 
-    <ol class="list-none p-0 m-0">
+    <ol class="posts">
       <!-- Post 1 -->
-      <li class="grid grid-cols-[84px_1fr_auto] gap-5.5 items-baseline py-4.5 border-b border-stone-200 cursor-default relative group">
-        <div class="absolute inset-[-12px] top-0 rounded-lg bg-transparent transition-colors group-hover:bg-stone-100 -z-10"></div>
-        <time class="font-mono text-[11.5px] text-stone-400 tabular-nums pt-0.5">2025-05-10</time>
+      <li class="post">
+        <time class="date" datetime="2025-05-10">2025-05-10</time>
         <div class="body">
-          <h3 class="m-0 mb-1 text-base leading-[1.35] font-medium tracking-tight text-stone-900">
-            <a href="/blog/astro-blog-setup" class="text-inherit no-underline bg-[linear-gradient(theme(colors.orange.600),theme(colors.orange.600))] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] group-hover:bg-[length:100%_1px]">
-              从零搭建 Astro 个人博客
-            </a>
+          <h3>
+            <a href="/blog/astro-blog-setup">从零搭建 Astro 个人博客</a>
           </h3>
-          <p class="m-0 text-stone-500 text-[13.5px] leading-[1.55]">
-            使用 Astro + TailwindCSS 构建一个现代化的静态博客，支持 Markdown 写作和自动部署。
-          </p>
-          <div class="flex items-center gap-2.5 mt-1.75 font-mono text-[11px] text-stone-400">
-            <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">Astro</span>
-            <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">博客</span>
+          <p>使用 Astro + TailwindCSS 构建一个现代化的静态博客，支持 Markdown 写作和自动部署。</p>
+          <div class="row">
+            <span class="pill">Astro</span>
+            <span class="pill">博客</span>
           </div>
         </div>
-        <div class="text-right font-mono text-[11px] text-stone-400 whitespace-nowrap pt-1">
-          <span class="inline-block opacity-0 translate-x-[-4px] transition-all group-hover:opacity-100 group-hover:translate-x-0 text-orange-600">→</span>
+        <div class="meta-r">
+          <span class="arrow">→</span>
         </div>
       </li>
 
       <!-- Post 2 -->
-      <li class="grid grid-cols-[84px_1fr_auto] gap-5.5 items-baseline py-4.5 border-b border-stone-200 cursor-default relative group">
-        <div class="absolute inset-[-12px] top-0 rounded-lg bg-transparent transition-colors group-hover:bg-stone-100 -z-10"></div>
-        <time class="font-mono text-[11.5px] text-stone-400 tabular-nums pt-0.5">2025-05-08</time>
+      <li class="post">
+        <time class="date" datetime="2025-05-08">2025-05-08</time>
         <div class="body">
-          <h3 class="m-0 mb-1 text-base leading-[1.35] font-medium tracking-tight text-stone-900">
-            <a href="/blog/ai-agent-workflow" class="text-inherit no-underline bg-[linear-gradient(theme(colors.orange.600),theme(colors.orange.600))] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] group-hover:bg-[length:100%_1px]">
-              AI Agent 工作流实践
-            </a>
+          <h3>
+            <a href="/blog/ai-agent-workflow">AI Agent 工作流实践</a>
           </h3>
-          <p class="m-0 text-stone-500 text-[13.5px] leading-[1.55]">
-            探索如何使用 AI Agent 自动化日常开发任务，提升工作效率。
-          </p>
-          <div class="flex items-center gap-2.5 mt-1.75 font-mono text-[11px] text-stone-400">
-            <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">AI</span>
-            <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">自动化</span>
+          <p>探索如何使用 AI Agent 自动化日常开发任务，提升工作效率。</p>
+          <div class="row">
+            <span class="pill">AI</span>
+            <span class="pill">自动化</span>
           </div>
         </div>
-        <div class="text-right font-mono text-[11px] text-stone-400 whitespace-nowrap pt-1">
-          <span class="inline-block opacity-0 translate-x-[-4px] transition-all group-hover:opacity-100 group-hover:translate-x-0 text-orange-600">→</span>
+        <div class="meta-r">
+          <span class="arrow">→</span>
         </div>
       </li>
 
       <!-- Post 3 -->
-      <li class="grid grid-cols-[84px_1fr_auto] gap-5.5 items-baseline py-4.5 border-b border-stone-200 cursor-default relative group">
-        <div class="absolute inset-[-12px] top-0 rounded-lg bg-transparent transition-colors group-hover:bg-stone-100 -z-10"></div>
-        <time class="font-mono text-[11.5px] text-stone-400 tabular-nums pt-0.5">2025-05-01</time>
+      <li class="post">
+        <time class="date" datetime="2025-05-01">2025-05-01</time>
         <div class="body">
-          <h3 class="m-0 mb-1 text-base leading-[1.35] font-medium tracking-tight text-stone-900">
-            <a href="/blog/docker-k8s-notes" class="text-inherit no-underline bg-[linear-gradient(theme(colors.orange.600),theme(colors.orange.600))] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] group-hover:bg-[length:100%_1px]">
-              Docker 和 K8s 学习笔记
-            </a>
+          <h3>
+            <a href="/blog/docker-k8s-notes">Docker 和 K8s 学习笔记</a>
           </h3>
-          <p class="m-0 text-stone-500 text-[13.5px] leading-[1.55]">
-            整理容器化和 Kubernetes 的核心概念与最佳实践。
-          </p>
-          <div class="flex items-center gap-2.5 mt-1.75 font-mono text-[11px] text-stone-400">
-            <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">Docker</span>
-            <span class="text-stone-500 border border-stone-200 px-1.5 rounded text-[10px]">K8s</span>
+          <p>整理容器化和 Kubernetes 的核心概念与最佳实践。</p>
+          <div class="row">
+            <span class="pill">Docker</span>
+            <span class="pill">K8s</span>
           </div>
         </div>
-        <div class="text-right font-mono text-[11px] text-stone-400 whitespace-nowrap pt-1">
-          <span class="inline-block opacity-0 translate-x-[-4px] transition-all group-hover:opacity-100 group-hover:translate-x-0 text-orange-600">→</span>
+        <div class="meta-r">
+          <span class="arrow">→</span>
         </div>
       </li>
     </ol>
   </section>
 
   <!-- Projects -->
-  <section class="pt-9 pb-7 border-t border-stone-200">
-    <div class="flex items-end justify-between mb-4.5 gap-3">
-      <h2 class="font-mono text-[12px] font-medium text-stone-500 tracking-wide mb-0 lowercase">// 项目</h2>
-      <a href="/projects" class="font-mono text-[11.5px] text-stone-400 hover:text-stone-600 transition-colors">查看全部 →</a>
+  <section class="sec rise d2">
+    <div class="sec-head">
+      <h2>项目</h2>
+      <span class="aux"><a href="/projects">查看全部 →</a></span>
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
+    <div class="projects">
       <!-- Project 1 -->
-      <article class="border border-stone-200 rounded-[6px] p-4 bg-transparent flex flex-col gap-2 transition-[border-color,transform] hover:border-stone-300 relative overflow-hidden">
-        <h4 class="m-0 text-sm font-semibold tracking-tight flex items-center gap-2">
-          <span class="w-1.75 h-1.75 rounded-full bg-green-500" title="活跃"></span>
+      <article class="project">
+        <h4>
+          <span class="stat active" title="活跃"></span>
           Hermes Agent
         </h4>
-        <p class="m-0 text-stone-500 text-[12.5px] leading-[1.5] flex-1">
-          一个智能 AI 助手，支持多工具协作和自主任务执行。
-        </p>
-        <div class="font-mono text-[10.5px] text-stone-400 flex gap-2.5 items-center border-t border-dashed border-stone-200 pt-2 mt-0.5">
-          <span><span class="text-orange-600 mr-1">■</span>TypeScript</span>
-          <span><span class="text-orange-600 mr-1">■</span>AI</span>
+        <p>一个智能 AI 助手，支持多工具协作和自主任务执行。</p>
+        <div class="foot">
+          <span class="lang">TypeScript</span>
+          <span class="lang">AI</span>
         </div>
       </article>
 
       <!-- Project 2 -->
-      <article class="border border-stone-200 rounded-[6px] p-4 bg-transparent flex flex-col gap-2 transition-[border-color,transform] hover:border-stone-300 relative overflow-hidden">
-        <h4 class="m-0 text-sm font-semibold tracking-tight flex items-center gap-2">
-          <span class="w-1.75 h-1.75 rounded-full bg-green-500" title="活跃"></span>
+      <article class="project">
+        <h4>
+          <span class="stat active" title="活跃"></span>
           RAG Toolkit
         </h4>
-        <p class="m-0 text-stone-500 text-[12.5px] leading-[1.5] flex-1">
-          简化 RAG 应用的开发工具包，支持多种向量数据库。
-        </p>
-        <div class="font-mono text-[10.5px] text-stone-400 flex gap-2.5 items-center border-t border-dashed border-stone-200 pt-2 mt-0.5">
-          <span><span class="text-orange-600 mr-1">■</span>Python</span>
-          <span><span class="text-orange-600 mr-1">■</span>RAG</span>
+        <p>简化 RAG 应用的开发工具包，支持多种向量数据库。</p>
+        <div class="foot">
+          <span class="lang">Python</span>
+          <span class="lang">RAG</span>
         </div>
       </article>
 
       <!-- Project 3 -->
-      <article class="border border-stone-200 rounded-[6px] p-4 bg-transparent flex flex-col gap-2 transition-[border-color,transform] hover:border-stone-300 relative overflow-hidden">
-        <h4 class="m-0 text-sm font-semibold tracking-tight flex items-center gap-2">
-          <span class="w-1.75 h-1.75 rounded-full bg-amber-500" title="开发中"></span>
+      <article class="project">
+        <h4>
+          <span class="stat wip" title="开发中"></span>
           Personal Blog
         </h4>
-        <p class="m-0 text-stone-500 text-[12.5px] leading-[1.5] flex-1">
-          基于 Astro 构建的静态博客，支持 Markdown 和自动部署。
-        </p>
-        <div class="font-mono text-[10.5px] text-stone-400 flex gap-2.5 items-center border-t border-dashed border-stone-200 pt-2 mt-0.5">
-          <span><span class="text-orange-600 mr-1">■</span>Astro</span>
-          <span><span class="text-orange-600 mr-1">■</span>Tailwind</span>
+        <p>基于 Astro 构建的静态博客，支持 Markdown 和自动部署。</p>
+        <div class="foot">
+          <span class="lang">Astro</span>
+          <span class="lang">Tailwind</span>
         </div>
       </article>
 
       <!-- Project 4 -->
-      <article class="border border-stone-200 rounded-[6px] p-4 bg-transparent flex flex-col gap-2 transition-[border-color,transform] hover:border-stone-300 relative overflow-hidden">
-        <h4 class="m-0 text-sm font-semibold tracking-tight flex items-center gap-2">
-          <span class="w-1.75 h-1.75 rounded-full bg-stone-400" title="归档"></span>
+      <article class="project">
+        <h4>
+          <span class="stat archive" title="归档"></span>
           CLI Tools
         </h4>
-        <p class="m-0 text-stone-500 text-[12.5px] leading-[1.5] flex-1">
-          一系列实用的命令行工具，用于日常开发任务。
-        </p>
-        <div class="font-mono text-[10.5px] text-stone-400 flex gap-2.5 items-center border-t border-dashed border-stone-200 pt-2 mt-0.5">
-          <span><span class="text-orange-600 mr-1">■</span>Rust</span>
-          <span><span class="text-orange-600 mr-1">■</span>CLI</span>
+        <p>一系列实用的命令行工具，用于日常开发任务。</p>
+        <div class="foot">
+          <span class="lang">Rust</span>
+          <span class="lang">CLI</span>
         </div>
       </article>
     </div>
   </section>
 
   <!-- Now Page -->
-  <section class="pt-9 pb-7 border-t border-stone-200">
-    <div class="flex items-end justify-between mb-4.5 gap-3">
-      <h2 class="font-mono text-[12px] font-medium text-stone-500 tracking-wide mb-0 lowercase">// 正在进行</h2>
+  <section class="sec rise d3">
+    <div class="sec-head">
+      <h2>正在进行</h2>
     </div>
 
-    <div class="grid grid-cols-[auto_1fr] gap-4 border border-stone-200 rounded-[6px] p-4.5 bg-[linear-gradient(180deg,theme(colors.stone.100),transparent_60%)]">
-      <time class="font-mono text-[10.5px] text-stone-400 tracking-wide pt-0.75">2025.05</time>
-      <ul class="m-0 p-0 list-none flex flex-col gap-1.5 text-sm text-stone-700">
-        <li class="grid grid-cols-[22px_1fr] gap-1 items-baseline">
-          <span class="font-mono text-[11px] text-stone-500">1</span>
-          <span>完成个人博客的基础搭建</span>
+    <div class="now">
+      <time class="stamp">2025.05</time>
+      <ul>
+        <li>
+          <span class="b">1</span>
+          <span class="t">完成个人博客的基础搭建</span>
         </li>
-        <li class="grid grid-cols-[22px_1fr] gap-1 items-baseline">
-          <span class="font-mono text-[11px] text-stone-500">2</span>
-          <span>学习 Astro 的内容集合功能</span>
+        <li>
+          <span class="b">2</span>
+          <span class="t">学习 Astro 的内容集合功能</span>
         </li>
-        <li class="grid grid-cols-[22px_1fr] gap-1 items-baseline">
-          <span class="font-mono text-[11px] text-stone-500">3</span>
-          <span>部署到 Cloudflare Pages</span>
+        <li>
+          <span class="b">3</span>
+          <span class="t">部署到 Cloudflare Pages</span>
         </li>
-        <li class="grid grid-cols-[22px_1fr] gap-1 items-baseline">
-          <span class="font-mono text-[11px] text-green-600">✓</span>
-          <span class="text-stone-500 line-through decoration-stone-300">研究最佳博客方案</span>
+        <li class="done">
+          <span class="b">✓</span>
+          <span class="t">研究最佳博客方案</span>
+        </li>
+        <li class="done">
+          <span class="b">✓</span>
+          <span class="t">完善页面渲染设计</span>
         </li>
       </ul>
     </div>

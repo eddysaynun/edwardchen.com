@@ -34,51 +34,36 @@ const projects: Project[] = [
     tags: ['Rust', 'CLI']
   }
 ];
-
-const statusConfig = {
-  active: { color: 'bg-green-500', label: '活跃' },
-  wip: { color: 'bg-amber-500', label: '开发中' },
-  archive: { color: 'bg-stone-400', label: '归档' }
-};
 ---
 
-<Layout title="项目 - Edward 的博客">
-  <section class="py-16 pb-10">
-    <div class="flex items-center gap-2.5 font-mono text-[11.5px] text-stone-500 mb-5.5">
+<Layout title="项目 - Edward Chen">
+  <section class="hero rise">
+    <div class="meta">
       <span>开源项目 · 实验作品 · 工具集</span>
     </div>
     
-    <h1 class="font-sans text-[34px] leading-[1.18] tracking-tight font-semibold mb-4.5 text-stone-900">
-      项目
-    </h1>
+    <h1>项目</h1>
     
-    <p class="text-base text-stone-500 max-w-[56ch]">
-      记录我的开源项目、实验性作品和工具集。
-    </p>
+    <p class="lede">记录我的开源项目、实验性作品和工具集。</p>
   </section>
 
   <!-- Projects Grid -->
-  <section class="pt-9 pb-7 border-t border-stone-200">
-    <div class="grid grid-cols-2 gap-3">
-      {projects.map((project) => {
-        const status = statusConfig[project.status];
-        return (
-          <article class="border border-stone-200 rounded-[6px] p-4 bg-transparent flex flex-col gap-2 transition-[border-color,transform] hover:border-stone-300 relative overflow-hidden">
-            <h4 class="m-0 text-sm font-semibold tracking-tight flex items-center gap-2">
-              <span class={`w-1.75 h-1.75 rounded-full ${status.color}`} title={status.label}></span>
-              {project.name}
-            </h4>
-            <p class="m-0 text-stone-500 text-[12.5px] leading-[1.5] flex-1">
-              {project.description}
-            </p>
-            <div class="font-mono text-[10.5px] text-stone-400 flex gap-2.5 items-center border-t border-dashed border-stone-200 pt-2 mt-0.5">
-              {project.tags.map((tag) => (
-                <span><span class="text-orange-600 mr-1">■</span>{tag}</span>
-              ))}
-            </div>
-          </article>
-        );
-      })}
+  <section class="sec rise d1">
+    <div class="projects">
+      {projects.map((project) => (
+        <article class="project">
+          <h4>
+            <span class={`stat ${project.status}`} title={project.status === 'active' ? '活跃' : project.status === 'wip' ? '开发中' : '归档'}></span>
+            {project.name}
+          </h4>
+          <p>{project.description}</p>
+          <div class="foot">
+            {project.tags.map((tag) => (
+              <span class="lang">{tag}</span>
+            ))}
+          </div>
+        </article>
+      ))}
     </div>
   </section>
 </Layout>
