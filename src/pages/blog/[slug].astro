@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import MarkdownRenderer from '../../components/MarkdownRenderer.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -10,12 +11,13 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const allPosts = await getCollection('blog');
-const post = allPosts.find(p => p.slug === slug);
+const post = (await getCollection('blog')).find(p => p.slug === slug);
 
 if (!post) {
   Astro.redirect('/blog');
 }
+
+const allPosts = await getCollection('blog');
 
 const relatedPosts = allPosts
   .filter(p => {
@@ -62,8 +64,10 @@ const nextPost = sortedPosts[postIndex - 1];
       </div>
     </header>
 
-    <section class="sec markdown-body">
-      {post.body}
+    <section class="sec">
+      <div class="markdown-body">
+        <MarkdownRenderer content={post.body} />
+      </div>
     </section>
 
     {relatedPosts.length > 0 && (
