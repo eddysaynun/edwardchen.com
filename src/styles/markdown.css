@@ -1,4 +1,4 @@
-/* Markdown Content Styles */
+/* Markdown Content Styles - Enhanced */
 
 .markdown-body {
   color: var(--muted);
@@ -27,7 +27,7 @@
 }
 
 .markdown-body h2::before {
-  content: "// ";
+  content: '// ';
   color: var(--muted-2);
 }
 

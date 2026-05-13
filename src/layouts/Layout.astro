@@ -61,5 +61,100 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
         </div>
       </footer>
     </div>
+
+    <!-- Tweaks Panel -->
+    <div id="tweaks-panel" class="tweaks-panel">
+      <button class="tweaks-toggle" aria-label="自定义设置">⚙️</button>
+      <div class="tweaks-menu">
+        <div class="tweak-group">
+          <span class="tweak-label">主题</span>
+          <div class="tweak-options">
+            <button class="tweak-option active" data-setting="theme" data-value="light">浅色</button>
+            <button class="tweak-option" data-setting="theme" data-value="dark">深色</button>
+          </div>
+        </div>
+        <div class="tweak-group">
+          <span class="tweak-label">字体</span>
+          <div class="tweak-options">
+            <button class="tweak-option active" data-setting="typeface" data-value="sans">无衬线</button>
+            <button class="tweak-option" data-setting="typeface" data-value="serif">衬线</button>
+          </div>
+        </div>
+        <div class="tweak-group">
+          <span class="tweak-label">密度</span>
+          <div class="tweak-options">
+            <button class="tweak-option" data-setting="density" data-value="compact">紧凑</button>
+            <button class="tweak-option active" data-setting="density" data-value="normal">正常</button>
+            <button class="tweak-option" data-setting="density" data-value="comfy">宽松</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        const toggle = document.querySelector('.tweaks-toggle');
+        const menu = document.querySelector('.tweaks-menu');
+        const options = document.querySelectorAll('.tweak-option');
+        
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          menu.classList.toggle('open');
+        });
+        
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) {
+            menu.classList.remove('open');
+          }
+        });
+        
+        options.forEach(option => {
+          option.addEventListener('click', () => {
+            const setting = option.dataset.setting;
+            const value = option.dataset.value;
+            document.querySelectorAll(`[data-setting="${setting}"]`).forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            if (setting === 'theme') {
+              document.documentElement.setAttribute('data-theme', value);
+              localStorage.setItem('edwardchen-theme', value);
+            } else if (setting === 'typeface') {
+              document.documentElement.setAttribute('data-typeface', value);
+              localStorage.setItem('edwardchen-typeface', value);
+            } else if (setting === 'density') {
+              document.documentElement.setAttribute('data-density', value);
+              localStorage.setItem('edwardchen-density', value);
+            }
+          });
+        });
+        
+        const savedTheme = localStorage.getItem('edwardchen-theme');
+        const savedTypeface = localStorage.getItem('edwardchen-typeface');
+        const savedDensity = localStorage.getItem('edwardchen-density');
+        [savedTheme, savedTypeface, savedDensity].forEach((value, i) => {
+          if (value) {
+            const settings = ['theme', 'typeface', 'density'];
+            document.documentElement.setAttribute(`data-${settings[i]}`, value);
+            document.querySelectorAll(`[data-setting="${settings[i]}"]`).forEach(opt => {
+              opt.classList.toggle('active', opt.dataset.value === value);
+            });
+          }
+        });
+      })();
+    </script>
+
+    <style>
+      .tweaks-panel { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+      .tweaks-toggle { width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--bg); border: none; cursor: pointer; display: grid; place-items: center; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s; }
+      .tweaks-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+      .tweaks-menu { position: absolute; bottom: 60px; right: 0; background: var(--bg); border: 1px solid var(--line-strong); border-radius: 12px; padding: 12px; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity 0.2s, transform 0.2s, visibility 0.2s; }
+      .tweaks-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+      .tweak-group { margin-bottom: 12px; }
+      .tweak-group:last-child { margin-bottom: 0; }
+      .tweak-label { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 6px; display: block; letter-spacing: 0.04em; }
+      .tweak-options { display: flex; gap: 4px; }
+      .tweak-option { flex: 1; padding: 6px 8px; border: 1px solid var(--line-strong); background: transparent; color: var(--muted); border-radius: 6px; font-family: var(--mono); font-size: 11px; cursor: pointer; transition: all 0.15s; }
+      .tweak-option:hover { border-color: var(--ink-2); color: var(--ink); }
+      .tweak-option.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    </style>
   </body>
 </html>
