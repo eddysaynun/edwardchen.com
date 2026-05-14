@@ -1,29 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { sortPostsByPinnedAndDate } from '../utils/posts';
+import Timeline from '../components/Timeline.astro';
 
 // 获取所有博客文章
 const allPosts = await getCollection('blog');
 
-// 分离置顶和普通文章
-const pinnedPosts = allPosts.filter(post => post.data.pinned);
-const normalPosts = allPosts.filter(post => !post.data.pinned);
-
-// 分别排序
-const sortedPinned = pinnedPosts.sort((a, b) => {
-  const dateA = a.data.pubDate || new Date(0);
-  const dateB = b.data.pubDate || new Date(0);
-  return dateB.getTime() - dateA.getTime();
-});
-
-const sortedNormal = normalPosts.sort((a, b) => {
-  const dateA = a.data.pubDate || new Date(0);
-  const dateB = b.data.pubDate || new Date(0);
-  return dateB.getTime() - dateA.getTime();
-});
-
-// 合并：置顶在前，普通在后
-const posts = [...sortedPinned, ...sortedNormal];
+// 使用工具函数排序
+const posts = sortPostsByPinnedAndDate(allPosts);
 
 // 提取所有标签
 const tagCounts: Record<string, number> = {};
@@ -67,36 +52,41 @@ const allTags = Object.entries(tagCounts)
 
   <!-- Posts List -->
   <section class="sec rise d2">
-    <ol class="posts" id="posts-list">
-      {posts.map((post) => (
-        <li class={`post ${post.data.pinned ? 'pinned' : ''}`} data-tags={post.data.tags.join(',')}>
-          <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
-            {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
-            {post.data.pinned && (
-              <span class="pinned-badge" title="置顶">📌</span>
-            )}
-          </time>
-          <div class="body">
-            <h3>
-              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
-            </h3>
-            <p>{post.data.description}</p>
-            <div class="row gap-2 flex-wrap">
-              {post.data.tags.map((tag) => (
-                <a href={`/blog/${post.slug}&tag=${encodeURIComponent(tag)}`} 
-                   class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-2.5 py-0.5"
-                   aria-label={`查看 ${tag} 标签的文章`}>
+    <div class="posts-container">
+      <ol class="posts" id="posts-list">
+        {posts.map((post) => (
+          <li class={`post ${post.data.pinned ? 'pinned' : ''}`} data-tags={post.data.tags.join(',')}>
+            <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
+              {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
+              {post.data.pinned && (
+                <span class="pinned-badge" title="置顶">📌</span>
+              )}
+            </time>
+            <div class="body">
+              <h3>
+                <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+              </h3>
+              <p>{post.data.description}</p>
+              <div class="row gap-2 flex-wrap">
+                {post.data.tags.map((tag) => (
+                  <a href={`/blog/${post.slug}&tag=${encodeURIComponent(tag)}`} 
+                     class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-2.5 py-0.5"
+                     aria-label={`查看 ${tag} 标签的文章`}>
                     #{tag}
-                </a>
-              ))}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-          <div class="meta-r">
-            <span class="arrow">→</span>
-          </div>
-        </li>
-      ))}
-    </ol>
+            <div class="meta-r">
+              <span class="arrow">→</span>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <!-- Timeline Sidebar -->
+      <Timeline posts={posts} />
+    </div>
   </section>
 
   <script is:inline>

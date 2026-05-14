@@ -535,6 +535,18 @@ ol.posts {
   letter-spacing: 0.02em;
 }
 
+/* Posts Container with Timeline */
+.posts-container {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem;
+  align-items: start;
+}
+
+ol.posts {
+  min-width: 0;
+}
+
 /* Projects Grid */
 .projects {
   display: grid;
