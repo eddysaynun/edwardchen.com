@@ -24,6 +24,7 @@
   color: var(--ink);
   margin: 2rem 0 1rem;
   letter-spacing: -0.01em;
+  scroll-margin-top: 100px;
 }
 
 .markdown-body h2::before {

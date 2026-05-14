@@ -6,6 +6,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
+import remarkToc from 'remark-toc';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -40,6 +41,14 @@ const postIndex = sortedPosts.findIndex(p => p.slug === slug);
 const prevPost = sortedPosts[postIndex + 1];
 const nextPost = sortedPosts[postIndex - 1];
 
+// Extract TOC from markdown
+const tocResult = await unified()
+  .use(remarkParse)
+  .use(remarkToc, { heading: 'h2', tight: true, ordered: false, ulTag: 'ul', ulItemTag: 'li', linkClass: 'toc-link' })
+  .process(post.body);
+
+const tocHtml = tocResult.contents.toString();
+
 // Render markdown to HTML using unified + remark
 const markdownHtml = await unified()
   .use(remarkParse)
@@ -49,79 +58,256 @@ const markdownHtml = await unified()
   .process(post.body);
 
 const htmlContent = markdownHtml.value?.toString() || '';
+
+// Parse TOC to extract headings
+const tocHeadings = [];
+const tocMatch = tocHtml.match(/<li><a href="#([^"]+)">([^<]+)<\/a><\/li>/g);
+if (tocMatch) {
+  tocMatch.forEach(item => {
+    const idMatch = item.match(/href="#([^"]+)"/);
+    const textMatch = item.match(/>([^<]+)</);
+    if (idMatch && textMatch) {
+      tocHeadings.push({
+        id: idMatch[1],
+        text: textMatch[1]
+      });
+    }
+  });
+}
 ---
 
 <Layout title={`${post.data.title} - Edward Chen`}>
-  <article class="rise">
-    <header class="hero">
-      <div class="meta">
-        <time datetime={post.data.pubDate?.toISOString() || ''}>
-          {post.data.pubDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '未发布'}
-        </time>
-        <span>•</span>
-        <span>约 {Math.max(1, Math.ceil(post.body.length / 500))} 分钟阅读</span>
-        {post.data.pinned && (
-          <>
-            <span>•</span>
-            <span class="text-accent font-medium">置顶</span>
-          </>
-        )}
-      </div>
-      
-      <h1>{post.data.title}</h1>
-      <p class="lede mb-6">{post.data.description}</p>
-      
-      <div class="row gap-2 flex-wrap">
-        {post.data.tags.map((tag) => (
-          <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
-             class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
-             aria-label={`查看 ${tag} 标签的文章`}>
-            #{tag}
-          </a>
-        ))}
-      </div>
-    </header>
-
-    <section class="sec">
-      <div class="markdown-body">
-        <div set:html={htmlContent}></div>
-      </div>
-    </section>
-
-    {relatedPosts.length > 0 && (
-      <section class="sec">
-        <div class="sec-head">
-          <h2>相关文章</h2>
+  <div class="article-container">
+    {tocHeadings.length > 0 && (
+      <aside class="article-toc">
+        <h3 class="toc-title">目录</h3>
+        <nav class="toc-nav">
+          <ul>
+            {tocHeadings.map((heading) => (
+              <li>
+                <a href={`#${heading.id}`} class="toc-link">
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+    )}
+    
+    <article class="article-content rise">
+      <header class="hero">
+        <div class="meta">
+          <time datetime={post.data.pubDate?.toISOString() || ''}>
+            {post.data.pubDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '未发布'}
+          </time>
+          <span>•</span>
+          <span>约 {Math.max(1, Math.ceil(post.body.length / 500))} 分钟阅读</span>
+          {post.data.pinned && (
+            <>
+              <span>•</span>
+              <span class="text-accent font-medium">置顶</span>
+            </>
+          )}
         </div>
-        <div class="projects">
-          {relatedPosts.map((relatedPost) => (
-            <article class="project">
-              <h4>
-                <a href={`/blog/${relatedPost.slug}`}>{relatedPost.data.title}</a>
-              </h4>
-              <p>{relatedPost.data.description}</p>
-            </article>
+        
+        <h1>{post.data.title}</h1>
+        <p class="lede mb-6">{post.data.description}</p>
+        
+        <div class="row gap-2 flex-wrap">
+          {post.data.tags.map((tag) => (
+            <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
+               class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
+               aria-label={`查看 ${tag} 标签的文章`}>
+              #{tag}
+            </a>
           ))}
         </div>
-      </section>
-    )}
+      </header>
 
-    <nav class="sec flex justify-between items-center flex-wrap gap-4">
-      {prevPost ? (
-        <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          ← 上一篇：{prevPost.data.title}
-        </a>
-      ) : (
-        <a href="/blog" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          ← 返回文章列表
-        </a>
+      <section class="sec">
+        <div class="markdown-body">
+          <div set:html={htmlContent}></div>
+        </div>
+      </section>
+
+      {relatedPosts.length > 0 && (
+        <section class="sec">
+          <div class="sec-head">
+            <h2>相关文章</h2>
+          </div>
+          <div class="projects">
+            {relatedPosts.map((relatedPost) => (
+              <article class="project">
+                <h4>
+                  <a href={`/blog/${relatedPost.slug}`}>{relatedPost.data.title}</a>
+                </h4>
+                <p>{relatedPost.data.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
       )}
+
+      <nav class="sec flex justify-between items-center flex-wrap gap-4">
+        {prevPost ? (
+          <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+            ← 上一篇：{prevPost.data.title}
+          </a>
+        ) : (
+          <a href="/blog" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+            ← 返回文章列表
+          </a>
+        )}
+        
+        {nextPost && (
+          <a href={`/blog/${nextPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+            下一篇：{nextPost.data.title} →
+          </a>
+        )}
+      </nav>
+    </article>
+  </div>
+
+  <style>
+    .article-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    @media (min-width: 1024px) {
+      .article-container {
+        grid-template-columns: 1fr 280px;
+      }
+    }
+
+    .article-toc {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+      padding: 1.5rem;
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+    }
+
+    .toc-title {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 1rem 0;
+      letter-spacing: 0.04em;
+      text-transform: lowercase;
+    }
+
+    .toc-title::before {
+      content: '// ';
+      color: var(--muted-2);
+    }
+
+    .toc-nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-nav li {
+      margin-bottom: 0.5rem;
+    }
+
+    .toc-link {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+      display: block;
+      padding: 0.25rem 0;
+      border-left: 2px solid transparent;
+      padding-left: 0.75rem;
+    }
+
+    .toc-link:hover {
+      color: var(--ink);
+      border-left-color: var(--accent);
+    }
+
+    .toc-link.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 500;
+    }
+
+    .article-content {
+      min-width: 0;
+    }
+
+    @media (max-width: 1023px) {
+      .article-toc {
+        display: none;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      const tocLinks = document.querySelectorAll('.toc-link');
+      const headings = document.querySelectorAll('.markdown-body h2');
       
-      {nextPost && (
-        <a href={`/blog/${nextPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          下一篇：{nextPost.data.title} →
-        </a>
-      )}
-    </nav>
-  </article>
+      if (tocLinks.length === 0 || headings.length === 0) return;
+
+      // 平滑滚动
+      tocLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          const target = document.querySelector(targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            history.pushState(null, '', targetId);
+          }
+        });
+      });
+
+      // 滚动监听，高亮当前章节
+      function updateActiveLink() {
+        const scrollPosition = window.scrollY + 150;
+        
+        let currentHeading = null;
+        headings.forEach(heading => {
+          const headingTop = heading.offsetTop;
+          if (scrollPosition >= headingTop - 50) {
+            currentHeading = heading;
+          }
+        });
+
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (currentHeading && link.getAttribute('href') === `#${currentHeading.id}`) {
+            link.classList.add('active');
+          }
+        });
+      }
+
+      // 初始检查
+      updateActiveLink();
+
+      // 滚动监听
+      window.addEventListener('scroll', updateActiveLink, { passive: true });
+
+      // 初始 URL 有 hash 时滚动
+      if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      }
+    })();
+  </script>
 </Layout>
