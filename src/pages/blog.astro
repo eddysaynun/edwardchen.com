@@ -5,12 +5,25 @@ import { getCollection } from 'astro:content';
 // 获取所有博客文章
 const allPosts = await getCollection('blog');
 
-// 按日期排序
-const posts = allPosts.sort((a, b) => {
+// 分离置顶和普通文章
+const pinnedPosts = allPosts.filter(post => post.data.pinned);
+const normalPosts = allPosts.filter(post => !post.data.pinned);
+
+// 分别排序
+const sortedPinned = pinnedPosts.sort((a, b) => {
   const dateA = a.data.pubDate || new Date(0);
   const dateB = b.data.pubDate || new Date(0);
   return dateB.getTime() - dateA.getTime();
 });
+
+const sortedNormal = normalPosts.sort((a, b) => {
+  const dateA = a.data.pubDate || new Date(0);
+  const dateB = b.data.pubDate || new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+// 合并：置顶在前，普通在后
+const posts = [...sortedPinned, ...sortedNormal];
 
 // 提取所有标签
 const tagCounts: Record<string, number> = {};
@@ -59,6 +72,9 @@ const allTags = Object.entries(tagCounts)
         <li class={`post ${post.data.pinned ? 'pinned' : ''}`} data-tags={post.data.tags.join(',')}>
           <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
             {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
+            {post.data.pinned && (
+              <span class="pinned-badge" title="置顶">📌</span>
+            )}
           </time>
           <div class="body">
             <h3>
