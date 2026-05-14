@@ -9,7 +9,9 @@
     "preview": "npm run build && wrangler dev",
     "astro": "npx astro",
     "deploy": "npm run build && wrangler deploy",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "sync-blog": "./scripts/sync-obsidian-blog.sh",
+    "sync-and-commit": "./scripts/sync-obsidian-blog.sh && git add src/content/blog && git commit -m \"同步博客文章\" && git push"
   },
   "dependencies": {
     "@astrojs/cloudflare": "11",
