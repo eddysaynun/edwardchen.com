@@ -8,6 +8,7 @@ import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import { toString } from 'mdast-util-to-string';
 import Giscus from '../../components/Giscus.astro';
+import Timeline from '../../components/Timeline.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -51,7 +52,7 @@ function extractHeadings(node) {
     const text = toString(node);
     const id = text
       .toLowerCase()
-      .replace(/[^\w\s\u4e00-\u9fa5]/g, '-')
+      .replace(/[\w\s\u4e00-\u9fa5]/g, '-')
       .replace(/\s+/g, '-')
       .trim();
     tocHeadings.push({ id, text });
@@ -76,6 +77,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
 ---
 
 <Layout title={`${post.data.title} - Edward Chen`}>
+  <!-- Left TOC -->
   {tocHeadings.length > 0 && (
     <aside class="article-toc">
       <h3 class="toc-title">目录</h3>
@@ -93,6 +95,12 @@ const htmlContent = markdownHtml.value?.toString() || '';
     </aside>
   )}
   
+  <!-- Right Timeline -->
+  <aside class="article-timeline">
+    <Timeline posts={allPosts} />
+  </aside>
+  
+  <!-- Main Content -->
   <article class="article-content rise">
     <header class="hero">
       <div class="meta">
@@ -179,6 +187,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
   </article>
 
   <style>
+    /* Left TOC */
     .article-toc {
       position: fixed;
       left: 0;
@@ -242,11 +251,36 @@ const htmlContent = markdownHtml.value?.toString() || '';
       font-weight: 500;
     }
 
+    /* Right Timeline */
+    .article-timeline {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 280px;
+      padding: 100px 1rem 2rem 1rem;
+      overflow-y: auto;
+      background: var(--bg);
+      z-index: 100;
+    }
+
+    /* Main Content */
     .article-content {
       max-width: 800px;
       margin-left: 240px;
-      margin-right: auto;
+      margin-right: 280px;
       padding: 0 1rem;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1200px) {
+      .article-timeline {
+        display: none;
+      }
+      
+      .article-content {
+        margin-right: 0;
+      }
     }
 
     @media (max-width: 1023px) {
