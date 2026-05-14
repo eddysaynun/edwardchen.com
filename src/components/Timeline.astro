@@ -68,17 +68,26 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
 
 <style>
   .timeline {
-    position: sticky;
-    top: 5rem;
-    max-height: calc(100vh - 6rem);
+    position: fixed;
+    right: 0;
+    top: 120px;
+    bottom: 0;
+    width: 240px;
+    padding: 100px 1.5rem 2rem 1.5rem;
     overflow-y: auto;
     overflow-x: hidden;
     background: var(--bg);
     border-left: 1px solid var(--border);
-    padding-left: 1.5rem;
-    margin-left: 2rem;
+    z-index: 100;
     font-size: 0.875rem;
     transition: all 0.3s ease;
+    display: none;
+  }
+
+  @media (min-width: 1200px) {
+    .timeline {
+      display: block;
+    }
   }
 
   .timeline-header {
@@ -233,12 +242,6 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
     background: var(--text-muted);
   }
 
-  /* 响应式 */
-  @media (max-width: 768px) {
-    .timeline {
-      display: none;
-    }
-  }
 </style>
 
 <script is:inline>
