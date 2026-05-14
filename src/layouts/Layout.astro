@@ -77,6 +77,7 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
           <div class="tweak-options">
             <button class="tweak-option active" data-setting="theme" data-value="light">浅色</button>
             <button class="tweak-option" data-setting="theme" data-value="dark">深色</button>
+            <button class="tweak-option" data-setting="theme" data-value="auto">跟随</button>
           </div>
         </div>
         <div class="tweak-group">
@@ -123,6 +124,11 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
             if (setting === 'theme') {
               document.documentElement.setAttribute('data-theme', value);
               localStorage.setItem('edwardchen-theme', value);
+              // 处理跟随系统主题
+              if (value === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+              }
             } else if (setting === 'typeface') {
               document.documentElement.setAttribute('data-typeface', value);
               localStorage.setItem('edwardchen-typeface', value);
@@ -145,6 +151,13 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
             });
           }
         });
+        
+        // 监听系统主题变化
+        if (savedTheme === 'auto') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+          });
+        }
       })();
     </script>
 
