@@ -15,16 +15,17 @@ interface Props {
 
 const {
   repo = 'eddysaynun/edwardchen.com',
-  repoId,
-  category = 'Comments',
-  categoryId,
+  repoId = 'R_kgDOScJuxg',
+  category = 'Announcements',
+  categoryId = 'DIC_kwDOScJuxs4C9Ddh',
   mapping = 'pathname',
   strict = '0',
   reactionsEnabled = '1',
   emitMetadata = '0',
   inputPosition = 'bottom',
-  theme = 'preferred_color_scheme',
+  theme = 'noborder_light',
   lang = 'zh-CN',
+  loading = 'lazy',
 } = Astro.props;
 ---
 
@@ -46,6 +47,7 @@ const {
     data-input-position={inputPosition}
     data-theme={theme}
     data-lang={lang}
+    data-loading={loading}
     crossorigin="anonymous"
     async
   >
