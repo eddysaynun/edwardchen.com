@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { sortPostsByPinnedAndDate } from '../utils/posts';
 import Timeline from '../components/Timeline.astro';
+import Search from '../components/Search.astro';
 import { t, getCurrentLang } from '../utils/i18n';
 
 const lang = getCurrentLang(false);
@@ -37,10 +38,15 @@ const allTags = Object.entries(tagCounts)
     <p class="lede">{t('blog.lede', lang)}</p>
   </section>
 
+  <!-- Search -->
+  <section class="sec rise d1">
+    <Search placeholder={t('blog.searchPlaceholder', lang)} />
+  </section>
+
   <!-- Tags Filter -->
   <section class="sec rise d1">
     <div class="tags">
-      <button class="tag" data-tag="all">
+      <button class="tag active" data-tag="all">
         {t('blog.all', lang)}
         <span class="ct">({posts.length})</span>
       </button>

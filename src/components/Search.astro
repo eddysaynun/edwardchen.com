@@ -1,0 +1,314 @@
+---
+interface Props {
+  placeholder?: string;
+}
+
+const { placeholder = '搜索文章...' } = Astro.props;
+---
+
+<div class="search-container">
+  <div class="search-box">
+    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input 
+      type="text" 
+      id="search-input" 
+      placeholder={placeholder}
+      aria-label="搜索文章"
+      autocomplete="off"
+    />
+    <button id="clear-search" class="clear-btn" aria-label="清除搜索">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+  
+  <div id="search-results" class="search-results" hidden>
+    <div class="results-header">
+      <span class="results-count"></span>
+    </div>
+    <ul class="results-list"></ul>
+  </div>
+</div>
+
+<script is:inline>
+  let index = null;
+  let data = [];
+  
+  async function loadIndex() {
+    if (index) return;
+    
+    try {
+      const response = await fetch('/search-index.json');
+      data = await response.json();
+      
+      // Initialize FlexSearch
+      index = new FlexSearch.Document({
+        document: {
+          id: 'id',
+          index: ['title', 'description', 'content'],
+          tag: 'tags'
+        },
+        tokenize: 'forward',
+        context: {
+          resolution: 9,
+          depth: 2,
+          separation: false
+        }
+      });
+      
+      // Add documents to index
+      index.add(data);
+    } catch (error) {
+      console.error('Failed to load search index:', error);
+    }
+  }
+  
+  function highlightText(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+  }
+  
+  function renderResults(results, query) {
+    const resultsContainer = document.getElementById('search-results');
+    const resultsList = resultsContainer.querySelector('.results-list');
+    const resultsCount = resultsContainer.querySelector('.results-count');
+    
+    if (results.length === 0) {
+      resultsContainer.hidden = true;
+      return;
+    }
+    
+    resultsContainer.hidden = false;
+    resultsCount.textContent = `找到 ${results.length} 篇文章`;
+    
+    resultsList.innerHTML = results.map(item => {
+      const post = data[item.id];
+      return `
+        <li class="result-item">
+          <a href="${post.slug}" class="result-link">
+            <h3 class="result-title">${highlightText(post.title, query)}</h3>
+            <p class="result-description">${highlightText(post.description || '暂无描述', query)}</p>
+            <div class="result-meta">
+              <time datetime="${post.published}">${new Date(post.published).toLocaleDateString('zh-CN')}</time>
+              ${post.tags.length > 0 ? `<span class="result-tags">${post.tags.slice(0, 3).map(tag => `#${tag}`).join(' ')}</span>` : ''}
+            </div>
+          </a>
+        </li>
+      `;
+    }).join('');
+  }
+  
+  // Event listeners
+  const searchInput = document.getElementById('search-input');
+  const clearBtn = document.getElementById('clear-search');
+  
+  searchInput.addEventListener('input', async (e) => {
+    const query = e.target.value.trim();
+    
+    if (!query) {
+      document.getElementById('search-results').hidden = true;
+      clearBtn.style.visibility = 'hidden';
+      return;
+    }
+    
+    clearBtn.style.visibility = 'visible';
+    
+    // Load index on first search
+    if (!index) {
+      await loadIndex();
+    }
+    
+    // Search
+    const results = index.search(query, {
+      limit: 10,
+      suggest: true,
+      enrichment: true
+    }).flatMap(r => r.result);
+    
+    renderResults(results, query);
+  });
+  
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.style.visibility = 'hidden';
+    document.getElementById('search-results').hidden = true;
+    searchInput.focus();
+  });
+  
+  // Close results when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) {
+      document.getElementById('search-results').hidden = true;
+    }
+  });
+  
+  // Load index on mount
+  loadIndex();
+</script>
+
+<style>
+  .search-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 48px;
+  }
+  
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  
+  #search-input {
+    width: 100%;
+    padding: 14px 48px 14px 48px;
+    font-size: 15px;
+    font-family: var(--sans);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--ink);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  #search-input:focus {
+    outline: none;
+    border-color: var(--ink-2);
+    box-shadow: 0 0 0 3px rgba(var(--ink-rgb), 0.1);
+  }
+  
+  .clear-btn {
+    position: absolute;
+    right: 12px;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s;
+  }
+  
+  .clear-btn:hover {
+    color: var(--ink);
+  }
+  
+  .search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    max-height: 500px;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  
+  .results-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  
+  .results-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .result-item {
+    border-bottom: 1px solid var(--line);
+  }
+  
+  .result-item:last-child {
+    border-bottom: none;
+  }
+  
+  .result-link {
+    display: block;
+    padding: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+  }
+  
+  .result-link:hover {
+    background: var(--panel);
+  }
+  
+  .result-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  
+  .result-description {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 8px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .result-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  
+  .result-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .result-tags span {
+    color: var(--ink-2);
+  }
+  
+  mark {
+    background: rgba(255, 200, 0, 0.2);
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+  
+  @media (max-width: 640px) {
+    .search-container {
+      max-width: 100%;
+      padding: 0 16px;
+    }
+    
+    #search-input {
+      padding: 12px 40px 12px 44px;
+      font-size: 16px;
+    }
+  }
+</style>

@@ -39,6 +39,7 @@ export const translations: Translations = {
   'blog.toc': { 'zh-CN': '目录', en: 'Table of Contents' },
   'blog.pinned': { 'zh-CN': '置顶', en: 'Pinned' },
   'blog.comments': { 'zh-CN': '💬 评论', en: '💬 Comments' },
+  'blog.searchPlaceholder': { 'zh-CN': '搜索文章...', en: 'Search posts...' },
   
   // 项目
   'projects.title': { 'zh-CN': '项目 - Edward Chen', en: 'Projects - Edward Chen' },

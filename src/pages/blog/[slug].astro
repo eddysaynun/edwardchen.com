@@ -8,6 +8,7 @@ import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import { toString } from 'mdast-util-to-string';
 import Giscus from '../../components/Giscus.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
 import { t, getCurrentLang } from '../../utils/i18n';
 
 const lang = getCurrentLang(false);
@@ -26,24 +27,46 @@ if (!post) {
   Astro.redirect('/blog');
 }
 
+// 使用工具函数获取相关文章
+const allPostsData = (await getCollection('blog')).map(p => ({
+  id: p.id,
+  title: p.data.title,
+  description: p.data.description,
+  tags: p.data.tags,
+  published: p.data.published,
+  slug: p.slug,
+}));
+
+const currentPostData = {
+  id: post.id,
+  title: post.data.title,
+  description: post.data.description,
+  tags: post.data.tags,
+  published: post.data.published,
+  slug: post.slug,
+};
+
+// 简单的相关文章算法：标签匹配
 const relatedPosts = post.data.tags.length > 0
-  ? (await getCollection('blog'))
+  ? allPostsData
       .filter(p => {
-        if (p.slug === slug) return false;
-        return p.data.tags.some(tag => post.data.tags.includes(tag));
+        if (p.id === post.id) return false;
+        return p.tags.some(tag => post.data.tags.includes(tag));
       })
       .slice(0, 3)
+      .map(p => {
+        const pubDate = new Date(p.published);
+        return isNaN(pubDate.getTime()) 
+          ? { ...p, published: new Date() }
+          : { ...p, published: pubDate };
+      })
   : [];
 
-const allPosts = await getCollection('blog');
-
-const sortedPosts = allPosts.sort((a, b) => {
-  const dateA = a.data.pubDate || new Date(0);
-  const dateB = b.data.pubDate || new Date(0);
-  return dateB.getTime() - dateA.getTime();
+const sortedPosts = allPostsData.sort((a, b) => {
+  return new Date(b.published).getTime() - new Date(a.published).getTime();
 });
 
-const postIndex = sortedPosts.findIndex(p => p.slug === slug);
+const postIndex = sortedPosts.findIndex(p => p.id === post.id);
 const prevPost = sortedPosts[postIndex + 1];
 const nextPost = sortedPosts[postIndex - 1];
 
@@ -137,27 +160,13 @@ const htmlContent = markdownHtml.value?.toString() || '';
     </section>
 
     {relatedPosts.length > 0 && (
-      <section class="sec">
-        <div class="sec-head">
-          <h2>{t('post.related', lang)}</h2>
-        </div>
-        <div class="projects">
-          {relatedPosts.map((relatedPost) => (
-            <article class="project">
-              <h4>
-                <a href={`/blog/${relatedPost.slug}`}>{relatedPost.data.title}</a>
-              </h4>
-              <p>{relatedPost.data.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <RelatedPosts posts={relatedPosts} />
     )}
 
     <nav class="sec flex justify-between items-center flex-wrap gap-4">
       {prevPost ? (
         <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          ← {t('post.prev', lang, { title: prevPost.data.title })}
+          ← {t('post.prev', lang, { title: prevPost.title })}
         </a>
       ) : (
         <a href="/blog" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
@@ -167,7 +176,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
       
       {nextPost && (
         <a href={`/blog/${nextPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          {t('post.next', lang, { title: nextPost.data.title })} →
+          {t('post.next', lang, { title: nextPost.title })} →
         </a>
       )}
     </nav>
