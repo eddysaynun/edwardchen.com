@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TagCloud from '../components/TagCloud.astro';
+import { getCollection } from 'astro:content';
+
+// 获取所有博客文章
+const allPosts = await getCollection('blog');
+
+// 统计标签
+const tagCounts: Record<string, number> = {};
+allPosts.forEach(post => {
+  post.data.tags.forEach(tag => {
+    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+  });
+});
+
+// 转换为数组并按计数排序
+const tags = Object.entries(tagCounts)
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
+---
+
+<Layout title="标签云 - Edward Chen">
+  <section class="hero rise">
+    <div class="meta">
+      <span>主题 · 分类 · 索引</span>
+    </div>
+    
+    <h1>标签云</h1>
+    
+    <p class="lede">浏览所有主题，快速找到感兴趣的内容。</p>
+  </section>
+
+  <!-- Tag Cloud -->
+  <section class="sec rise d1">
+    <TagCloud tags={tags} />
+  </section>
+
+  <!-- Tag List -->
+  <section class="sec rise d2">
+    <div class="sec-head">
+      <h2>标签列表</h2>
+    </div>
+    <div class="tag-list">
+      {tags.map((tag) => (
+        <a href={`/tags/${encodeURIComponent(tag.name)}`} class="tag-list-item">
+          <span class="tag-name">{tag.name}</span>
+          <span class="tag-count">{tag.count} 篇文章</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tag-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .tag-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.2s ease;
+  }
+
+  .tag-list-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .tag-name {
+    font-weight: 500;
+    font-size: 0.9375rem;
+  }
+
+  .tag-count {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  @media (max-width: 768px) {
+    .tag-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

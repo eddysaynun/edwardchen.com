@@ -14,6 +14,7 @@ export const translations: Translations = {
   // 导航
   'nav.home': { 'zh-CN': '首页', en: 'Home' },
   'nav.blog': { 'zh-CN': '文章', en: 'Blog' },
+  'nav.tags': { 'zh-CN': '标签', en: 'Tags' },
   'nav.projects': { 'zh-CN': '项目', en: 'Projects' },
   'nav.about': { 'zh-CN': '关于', en: 'About' },
   

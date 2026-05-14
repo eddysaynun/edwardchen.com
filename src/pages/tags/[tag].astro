@@ -1,0 +1,79 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { sortPostsByPinnedAndDate } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const tagSet = new Set<string>();
+  
+  posts.forEach(post => {
+    post.data.tags.forEach(tag => tagSet.add(tag));
+  });
+  
+  return Array.from(tagSet).map(tag => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+const decodedTag = decodeURIComponent(tag);
+
+const allPosts = await getCollection('blog');
+const filteredPosts = allPosts.filter(post => post.data.tags.includes(decodedTag));
+const sortedPosts = sortPostsByPinnedAndDate(filteredPosts);
+---
+
+<Layout title={`${decodedTag} - 文章 - Edward Chen`}>
+  <section class="hero rise">
+    <div class="meta">
+      <span>标签 · {decodedTag}</span>
+    </div>
+    
+    <h1>{decodedTag}</h1>
+    
+    <p class="lede">共 {sortedPosts.length} 篇文章</p>
+  </section>
+
+  <!-- Back to Tags -->
+  <nav class="sec rise">
+    <a href="/tags" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+      ← 返回标签列表
+    </a>
+  </nav>
+
+  <!-- Posts List -->
+  <section class="sec rise d1">
+    <ol class="posts">
+      {sortedPosts.map((post) => (
+        <li class={`post ${post.data.pinned ? 'pinned' : ''}`}>
+          <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
+            {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
+            {post.data.pinned && (
+              <span class="pinned-badge" title="置顶">📌</span>
+            )}
+          </time>
+          <div class="body">
+            <h3>
+              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+            </h3>
+            <p>{post.data.description}</p>
+            <div class="row gap-2 flex-wrap">
+              {post.data.tags.map((t) => (
+                <a 
+                  href={`/tags/${encodeURIComponent(t)}`} 
+                  class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-2.5 py-0.5"
+                  aria-label={`查看 ${t} 标签的文章`}>
+                  #{t}
+                </a>
+              ))}
+            </div>
+          </div>
+          <div class="meta-r">
+            <span class="arrow">→</span>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+</Layout>

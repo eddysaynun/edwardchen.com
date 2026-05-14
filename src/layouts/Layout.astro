@@ -40,6 +40,7 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
           <nav class="top">
             <a href="/" class={Astro.url.pathname === '/' || Astro.url.pathname === '/index.html' ? 'active' : ''}>首页</a>
             <a href="/blog" class={Astro.url.pathname === '/blog' || Astro.url.pathname.startsWith('/blog/') ? 'active' : ''}>文章</a>
+            <a href="/tags" class={Astro.url.pathname === '/tags' || Astro.url.pathname.startsWith('/tags/') ? 'active' : ''}>标签</a>
             <a href="/projects" class={Astro.url.pathname === '/projects' || Astro.url.pathname.startsWith('/projects/') ? 'active' : ''}>项目</a>
             <a href="/about" class={Astro.url.pathname === '/about' || Astro.url.pathname.startsWith('/about/') ? 'active' : ''}>关于</a>
           </nav>
