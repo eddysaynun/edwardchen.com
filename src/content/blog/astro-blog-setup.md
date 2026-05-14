@@ -1,44 +1,63 @@
 ---
 title: "从零搭建 Astro 个人博客"
-description: "使用 Astro + TailwindCSS 构建一个现代化的静态博客，支持 Markdown 写作和自动部署。"
+description: "使用 Astro + TailwindCSS 构建现代化静态博客，实现内容集合、置顶排序、时间线导航等最佳实践。"
 pubDate: 2025-05-10
-updatedDate: 2025-05-14
-tags: ["Astro", "博客", "静态站点", "TailwindCSS"]
+updatedDate: 2026-05-14
+tags: ["Astro", "博客", "静态站点", "TailwindCSS", "最佳实践"]
 pinned: true
 ---
 
 # 从零搭建 Astro 个人博客
 
-本文将介绍如何使用 Astro 和 TailwindCSS 从零搭建一个现代化的个人博客，并记录实际开发中遇到的问题和解决方案。
+本文记录使用 Astro 构建个人博客的完整流程，涵盖项目初始化、内容管理、交互优化、组件抽象等核心环节，并总结实际开发中的最佳实践。
 
-## 为什么选择 Astro？
+---
 
-Astro 是一个现代的 Web 框架，专为内容驱动的网站设计。它的主要优势包括：
+## 一、技术选型
 
-- **极致的性能** — 默认零 JavaScript 输出
-- **优秀的 SEO** — 静态生成支持
-- **灵活的框架支持** — 可以使用 React、Vue、Svelte 组件
-- **Markdown 原生支持** — 内容写作体验极佳
+### 为什么选择 Astro？
 
-## 项目初始化
+Astro 是专为内容驱动型网站设计的现代 Web 框架，核心优势包括：
 
-首先，我们需要创建一个新的 Astro 项目：
+1. **零 JavaScript 输出** — 默认不发送 JS，按需 hydration，性能极致
+2. **静态生成优先** — 预渲染 HTML，SEO 友好
+3. **多框架兼容** — 可混用 React、Vue、Svelte 组件
+4. **Markdown 原生支持** — Content Collections 提供类型安全的内容管理
+
+### 技术栈
+
+| 模块 | 技术选型 | 理由 |
+|------|----------|------|
+| 框架 | Astro 4.x | 静态生成，零 JS 输出 |
+| 样式 | TailwindCSS | 原子化 CSS，开发效率高 |
+| 内容 | Markdown + Content Collections | 类型安全，写作体验佳 |
+| 部署 | Cloudflare Pages | 全球 CDN，自动 HTTPS，免费 |
+| 版本控制 | GitHub | 免费托管，CI/CD 集成 |
+
+---
+
+## 二、项目初始化
+
+### 创建项目
 
 ```bash
-npm create astro@latest
-# 或者
-npx create-astro@latest
+npm create astro@latest my-blog
+# 或
+npx create-astro@latest my-blog
 ```
 
-## 安装 TailwindCSS
+推荐选项：
+- 使用空模板（Empty）
+- 启用 TypeScript
+- 添加 TailwindCSS 集成
 
-使用 Astro 的官方 Tailwind 集成：
+### 安装 TailwindCSS
 
 ```bash
 npm install -D @astrojs/tailwind tailwindcss
 ```
 
-然后在 `astro.config.mjs` 中配置：
+`astro.config.mjs`:
 
 ```js
 import { defineConfig } from 'astro/config';
@@ -49,13 +68,13 @@ export default defineConfig({
 });
 ```
 
-## 创建内容集合
+---
 
-Astro 的内容集合功能让我们可以类型安全地管理博客文章。
+## 三、内容集合（Content Collections）
 
-### 1. 创建配置文件
+### 1. 定义 Schema
 
-在 `src/content/config.ts` 中定义：
+`src/content/config.ts`:
 
 ```ts
 import { defineCollection, z } from 'astro:content';
@@ -76,61 +95,60 @@ export const collections = {
 };
 ```
 
+**Schema 设计要点：**
+- `title` 和 `description` 为必填字段
+- `pubDate` 使用 `z.date()` 自动解析 ISO 字符串
+- `tags` 默认为空数组，避免未定义错误
+- `pinned` 控制文章置顶，默认 `false`
+
 ### 2. 创建文章
 
-在 `src/content/blog/` 目录下创建 Markdown 或 MDX 文件：
+`src/content/blog/your-post.md`:
 
 ```md
 ---
-title: "我的第一篇博客"
-description: "这是博客的简介"
-pubDate: 2025-05-13
+title: "文章标题"
+description: "文章摘要，用于列表页展示"
+pubDate: 2026-05-14
 tags: ["技术", "笔记"]
+pinned: true
 ---
 
-# 正文内容
+# 正文
 
-这里是博客的正文...
+这里是文章内容...
 ```
+
+**Frontmatter 规范：**
+- 日期格式：`YYYY-MM-DD`（ISO 8601）
+- 标签数组：使用双引号，避免解析错误
+- 置顶标识：`pinned: true` 即可
 
 ---
 
-## 实战优化：Tag 展示与筛选功能
+## 四、核心功能实现
 
-在实际开发中，我遇到了 tag 展示的问题，并进行了完整的优化。以下是详细的实现过程和踩坑记录。
+### 4.1 Tag 展示与筛选
 
-### 问题描述
+#### 问题描述
 
-初始实现中，tag 标签挤在一起显示，例如 "AI 自动化生产力" 没有间距，用户体验不佳。
+初始实现中，tag 标签挤在一起显示（如 "AI 自动化生产力"），缺乏间距和交互反馈。
 
-**目标：**
-1. 添加 tag 之间的适当间距
-2. 使用 Stone 色系保持极简设计
-3. 添加悬停微交互
-4. 实现 tag 点击筛选功能
-5. 支持 URL 参数同步
+#### 设计目标
 
-### 解决方案
+1. 视觉：Stone 色系，适当间距，悬停微交互
+2. 交互：点击筛选，URL 同步，浏览器导航支持
+3. 无障碍：`aria-label`，键盘可访问
 
-#### 第一步：视觉优化
+#### 实现方案
 
-**文件：** `src/pages/blog/[slug].astro`
+**单篇文章页** (`src/pages/blog/[slug].astro`):
 
-**优化前：**
-```astro
-<div class="row">
-  {post.data.tags.map((tag) => (
-    <span class="pill">{tag}</span>
-  ))}
-</div>
-```
-
-**优化后：**
 ```astro
 <div class="row gap-2 flex-wrap">
   {post.data.tags.map((tag) => (
     <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
-       class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
+       class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-2.5 py-0.5"
        aria-label={`查看 ${tag} 标签的文章`}>
       #{tag}
     </a>
@@ -138,134 +156,101 @@ tags: ["技术", "笔记"]
 </div>
 ```
 
-**关键改进：**
-- `gap-2 flex-wrap`：添加间距并支持换行
+**关键设计：**
+- `gap-2 flex-wrap`：间距 + 换行
 - Stone 色系：`text-stone-600 bg-stone-100`
-- 微交互：`hover:bg-stone-200 hover:text-stone-900 transition-colors`
-- 标签前缀：添加 `#` 符号
-- 可点击：改为 `<a>` 标签
-- 无障碍：添加 `aria-label`
+- 微交互：`hover:bg-stone-200 transition-colors`
+- 标签前缀：`#` 符号
+- 可点击：`<a>` 标签跳转列表页
 
-#### 第二步：客户端筛选功能
-
-**问题：** 博客列表页的 tag 按钮点击没有反应
-
-**解决方案：** 使用 `<script is:inline>` 添加客户端交互
-
-**文件：** `src/pages/blog.astro`
+**博客列表页** (`src/pages/blog.astro`):
 
 ```astro
----
-import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+<!-- Tag 筛选按钮 -->
+<div class="tags">
+  <button class="tag" data-tag="all">
+    全部 <span class="ct">({posts.length})</span>
+  </button>
+  {allTags.map((tag) => (
+    <button class="tag" data-tag={tag}>
+      {tag} <span class="ct">({tagCounts[tag]})</span>
+    </button>
+  ))}
+</div>
 
-// ... 获取文章数据 ...
----
-
-<Layout title="文章 - Edward Chen">
-  <!-- Tags Filter -->
-  <section class="sec rise d1">
-    <div class="tags">
-      <button class="tag" data-tag="all">
-        全部
-        <span class="ct">({posts.length})</span>
-      </button>
-      {allTags.map((tag) => (
-        <button class="tag" data-tag={tag}>
-          {tag}
-          <span class="ct">({tagCounts[tag]})</span>
-        </button>
-      ))}
-    </div>
-  </section>
-
-  <!-- Posts List -->
-  <section class="sec rise d2">
-    <ol class="posts" id="posts-list">
-      {posts.map((post) => (
-        <li class={`post ${post.data.pinned ? 'pinned' : ''}`} 
-            data-tags={post.data.tags.join(',')}>
-          <!-- 文章内容 -->
-        </li>
-      ))}
-    </ol>
-  </section>
-
-  <script is:inline>
-    (function() {
-      const tagButtons = document.querySelectorAll('.tag');
-      const posts = document.querySelectorAll('#posts-list .post');
-      const urlParams = new URLSearchParams(window.location.search);
-      const selectedTag = urlParams.get('tag');
-
-      // 初始化：高亮选中的 tag
-      if (selectedTag) {
-        tagButtons.forEach(btn => {
-          btn.classList.toggle('on', btn.dataset.tag === selectedTag);
-        });
-        filterPosts(selectedTag);
-      } else {
-        tagButtons[0]?.classList.add('on');
-      }
-
-      // 点击 tag 按钮
-      tagButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const tag = btn.dataset.tag;
-          
-          // 更新按钮状态
-          tagButtons.forEach(b => b.classList.remove('on'));
-          btn.classList.add('on');
-
-          // 更新 URL（不刷新页面）
-          const newUrl = tag === 'all' 
-            ? '/blog' 
-            : '/blog?tag=' + encodeURIComponent(tag);
-          history.pushState({ tag: tag }, '', newUrl);
-
-          // 筛选文章
-          filterPosts(tag);
-        });
-      });
-
-      // 筛选函数
-      function filterPosts(tag) {
-        posts.forEach(post => {
-          const postTags = post.dataset.tags.split(',');
-          if (tag === 'all' || postTags.includes(tag)) {
-            post.style.display = '';
-          } else {
-            post.style.display = 'none';
-          }
-        });
-      }
-
-      // 支持浏览器前进后退
-      window.addEventListener('popstate', function(e) {
-        var tag = (e.state && e.state.tag) || 'all';
-        tagButtons.forEach(function(btn) {
-          btn.classList.toggle('on', btn.dataset.tag === tag);
-        });
-        filterPosts(tag);
-      });
-    })();
-  </script>
-</Layout>
+<!-- 文章列表 -->
+<ol class="posts" id="posts-list">
+  {posts.map((post) => (
+    <li class="post" data-tags={post.data.tags.join(',')}>
+      <!-- 文章内容 -->
+    </li>
+  ))}
+</ol>
 ```
 
-### 踩坑记录
+**客户端筛选逻辑** (`<script is:inline>`):
 
-#### 问题 1：Astro Script 组件报错
+```javascript
+(function() {
+  const tagButtons = document.querySelectorAll('.tag');
+  const posts = document.querySelectorAll('#posts-list .post');
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedTag = urlParams.get('tag');
 
-**错误信息：**
+  // 初始化状态
+  if (selectedTag) {
+    tagButtons.forEach(btn => {
+      btn.classList.toggle('on', btn.dataset.tag === selectedTag);
+    });
+    filterPosts(selectedTag);
+  } else {
+    tagButtons[0]?.classList.add('on');
+  }
+
+  // 点击筛选
+  tagButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag;
+      
+      // 更新按钮状态
+      tagButtons.forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+
+      // 更新 URL（不刷新）
+      const newUrl = tag === 'all' 
+        ? '/blog' 
+        : '/blog?tag=' + encodeURIComponent(tag);
+      history.pushState({ tag: tag }, '', newUrl);
+
+      // 筛选文章
+      filterPosts(tag);
+    });
+  });
+
+  // 筛选函数
+  function filterPosts(tag) {
+    posts.forEach(post => {
+      const postTags = post.dataset.tags.split(',');
+      post.style.display = (tag === 'all' || postTags.includes(tag)) ? '' : 'none';
+    });
+  }
+
+  // 浏览器前进后退
+  window.addEventListener('popstate', function(e) {
+    var tag = (e.state && e.state.tag) || 'all';
+    tagButtons.forEach(function(btn) {
+      btn.classList.toggle('on', btn.dataset.tag === tag);
+    });
+    filterPosts(tag);
+  });
+})();
 ```
-Unexpected "const"
-pages/blog.astro:61:14
-```
 
-**原因：** `<Script>` 组件会压缩代码，导致语法错误
+#### 踩坑记录
 
-**错误写法：**
+**问题 1：Script 组件压缩错误**
+
+错误写法：
 ```astro
 import Script from 'astro:script';
 <Script>
@@ -273,176 +258,492 @@ import Script from 'astro:script';
 </Script>
 ```
 
-**正确写法：**
+正确写法：
 ```astro
 <script is:inline>
   const x = 1;
 </script>
 ```
 
-#### 问题 2：模板字符串被压缩
+**问题 2：模板字符串兼容**
 
-**错误：** 模板字符串在压缩后出错
-
-**错误写法：**
+错误写法（压缩后出错）：
 ```javascript
 const url = `/blog?tag=${encodeURIComponent(tag)}`;
 ```
 
-**正确写法：**
+正确写法：
 ```javascript
 const url = '/blog?tag=' + encodeURIComponent(tag);
 ```
 
-#### 问题 3：现代 JavaScript 语法兼容
+**问题 3：现代语法兼容**
 
-**错误：** 可选链和箭头函数在某些环境下不兼容
-
-**错误写法：**
+错误写法：
 ```javascript
 const tag = e.state?.tag || 'all';
 tagButtons.forEach(btn => { ... });
 ```
 
-**正确写法：**
+正确写法：
 ```javascript
 var tag = (e.state && e.state.tag) || 'all';
 tagButtons.forEach(function(btn) { ... });
 ```
 
-### 设计细节
+**最佳实践：**
+- 使用 `<script is:inline>` 而非 `<Script>` 组件
+- 避免模板字符串，使用字符串拼接
+- 避免可选链 `?.` 和箭头函数，使用传统语法
+- 使用 `var` 而非 `const/let` 增强兼容性
 
-#### 颜色系统（Stone 主题）
+---
+
+### 4.2 置顶文章功能
+
+#### 需求分析
+
+支持文章置顶，置顶文章在列表和首页优先展示，并带有视觉标识。
+
+#### 实现方案
+
+**排序逻辑：**
+1. 分离置顶和普通文章
+2. 各自按日期倒序排序
+3. 合并：置顶在前，普通在后
+
+**代码实现：**
+
+```javascript
+const pinnedPosts = allPosts.filter(post => post.data.pinned);
+const normalPosts = allPosts.filter(post => !post.data.pinned);
+
+const sortedPinned = pinnedPosts.sort((a, b) => {
+  const dateA = a.data.pubDate || new Date(0);
+  const dateB = b.data.pubDate || new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+const sortedNormal = normalPosts.sort((a, b) => {
+  const dateA = a.data.pubDate || new Date(0);
+  const dateB = b.data.pubDate || new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+const posts = [...sortedPinned, ...sortedNormal];
+```
+
+**视觉标识：**
+
+```astro
+<time class="date">
+  {post.data.pubDate?.toLocaleDateString('zh-CN')}
+  {post.data.pinned && (
+    <span class="pinned-badge" title="置顶">📌</span>
+  )}
+</time>
+```
+
+**CSS 样式：**
 
 ```css
-text-stone-600    /* 默认文字颜色 */
-bg-stone-100      /* 默认背景色 */
-hover:bg-stone-200 /* 悬停背景色 */
-hover:text-stone-900 /* 悬停文字颜色 */
+.post.pinned .date {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.post.pinned .pinned-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 14px;
+}
+
+.post.pinned .date::after {
+  content: '• 置顶';
+  display: block;
+  color: var(--accent);
+  font-size: 10px;
+  margin-top: 2px;
+}
 ```
 
-#### 间距规范
+**效果：**
+- 日期高亮（主题色）
+- 图钉图标 📌
+- "• 置顶" 文字说明
 
-- **Tag 间距：** `gap-2` (0.5rem)
-- **文字大小：** `text-xs` (0.75rem)
-- **详情页 padding：** `px-3 py-1` (12px 水平，4px 垂直)
-- **列表页 padding：** `px-2.5 py-0.5` (10px 水平，2px 垂直)
+---
 
-#### 微交互
+### 4.3 排序逻辑抽象化
 
-- **过渡动画：** `transition-colors` (150ms 默认)
-- **悬停状态：** 背景变深，文字变深
-- **激活状态：** 添加 `class="on"` 到选中的 tag 按钮
+#### 问题
 
-### 数据属性模式
+排序代码在首页、博客列表页重复，维护成本高。
 
-**Tag 按钮：**
+#### 解决方案
+
+创建工具函数库，统一排序逻辑。
+
+`src/utils/posts.ts`:
+
+```typescript
+export interface BlogPost {
+  data: {
+    pubDate?: Date;
+    pinned?: boolean;
+    [key: string]: unknown;
+  };
+  slug: string;
+  [key: string]: unknown;
+}
+
+/**
+ * 按置顶和日期排序文章
+ */
+export function sortPostsByPinnedAndDate(posts: BlogPost[]): BlogPost[] {
+  const pinnedPosts = posts.filter(post => post.data.pinned);
+  const normalPosts = posts.filter(post => !post.data.pinned);
+
+  const sortedPinned = pinnedPosts.sort((a, b) => {
+    const dateA = a.data.pubDate || new Date(0);
+    const dateB = b.data.pubDate || new Date(0);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+  const sortedNormal = normalPosts.sort((a, b) => {
+    const dateA = a.data.pubDate || new Date(0);
+    const dateB = b.data.pubDate || new Date(0);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+  return [...sortedPinned, ...sortedNormal];
+}
+
+/**
+ * 按年月分组文章
+ */
+export function groupPostsByYearMonth(posts: BlogPost[]): Record<string, BlogPost[]> {
+  const groups: Record<string, BlogPost[]> = {};
+
+  posts.forEach(post => {
+    if (!post.data.pubDate) {
+      if (!groups['未发布']) groups['未发布'] = [];
+      groups['未发布'].push(post);
+      return;
+    }
+
+    const year = post.data.pubDate.getFullYear();
+    const month = String(post.data.pubDate.getMonth() + 1).padStart(2, '0');
+    const key = `${year}-${month}`;
+
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(post);
+  });
+
+  return groups;
+}
+
+/**
+ * 获取年月显示文本
+ */
+export function getYearMonthLabel(key: string): string {
+  if (key === '未发布') return '未发布';
+  const [year, month] = key.split('-');
+  return `${year}年${parseInt(month)}月`;
+}
+```
+
+**复用示例：**
+
+`src/pages/index.astro`:
 ```astro
-<button class="tag" data-tag="all">全部</button>
-<button class="tag" data-tag="AI">AI</button>
+import { sortPostsByPinnedAndDate } from '../utils/posts';
+
+const allPostsRaw = await getCollection('blog');
+const allPosts = sortPostsByPinnedAndDate(allPostsRaw);
+const latestPosts = allPosts.slice(0, 3);
 ```
 
-**文章列表项：**
+**优势：**
+- 代码复用，减少重复
+- 统一排序逻辑，避免不一致
+- 类型安全（TypeScript）
+- 易于测试和维护
+
+---
+
+### 4.4 时间线组件
+
+#### 需求
+
+在博客列表页右侧添加时间线，按年月分组展示文章，支持滚动跟随和折叠。
+
+#### 设计要点
+
+1. **布局**：右侧固定宽度（280px），不挤占列表空间
+2. **定位**：`position: sticky`，滚动时跟随
+3. **分组**：按 `2026 年 5 月` 格式分组，显示文章数量
+4. **交互**：可折叠，悬停效果，置顶标识
+5. **响应式**：移动端隐藏
+
+#### 实现
+
+`src/components/Timeline.astro`:
+
 ```astro
-<li class="post" data-tags="AI,自动化，生产力">
-```
+---
+import { sortPostsByPinnedAndDate, groupPostsByYearMonth, getYearMonthLabel } from '../utils/posts';
 
-**JavaScript 访问：**
-```javascript
-const tag = btn.dataset.tag;  // "AI"
-const postTags = post.dataset.tags.split(',');  // ["AI", "自动化", "生产力"]
-```
+interface Props {
+  posts: {
+    data: {
+      pubDate?: Date;
+      title: string;
+      pinned?: boolean;
+    };
+    slug: string;
+  }[];
+}
 
-### URL 同步
+const { posts } = Astro.props;
+const sortedPosts = sortPostsByPinnedAndDate(posts);
+const groupedPosts = groupPostsByYearMonth(sortedPosts);
 
-**Push State（不刷新页面）：**
-```javascript
-const newUrl = tag === 'all' 
-  ? '/blog' 
-  : '/blog?tag=' + encodeURIComponent(tag);
-history.pushState({ tag: tag }, '', newUrl);
-```
-
-**从 URL 读取：**
-```javascript
-const urlParams = new URLSearchParams(window.location.search);
-const selectedTag = urlParams.get('tag'); // "AI" 或 null
-```
-
-**浏览器导航支持：**
-```javascript
-window.addEventListener('popstate', function(e) {
-  var tag = (e.state && e.state.tag) || 'all';
-  // 更新 UI 和筛选
+const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
+  if (a === '未发布' || b === '未发布') return a === '未发布' ? 1 : -1;
+  return b.localeCompare(a);
 });
+---
+
+<aside class="timeline">
+  <div class="timeline-header">
+    <h3>时间线</h3>
+    <div class="timeline-toggle" title="收起/展开">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="timeline-content">
+    {yearMonths.map((yearMonth) => (
+      <div class="timeline-group">
+        <div class="timeline-year">
+          <span class="year-label">{getYearMonthLabel(yearMonth)}</span>
+          <span class="year-count">({groupedPosts[yearMonth].length})</span>
+        </div>
+        
+        <ul class="timeline-list">
+          {groupedPosts[yearMonth].map((post) => (
+            <li class={`timeline-item ${post.data.pinned ? 'pinned' : ''}`}>
+              <div class="timeline-dot"></div>
+              <div class="timeline-content-item">
+                <time class="timeline-date">
+                  {post.data.pubDate?.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' })}
+                </time>
+                <a href={`/blog/${post.slug}`} class="timeline-title">
+                  {post.data.title}
+                  {post.data.pinned && <span class="pinned-icon">📌</span>}
+                </a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</aside>
+
+<style>
+  .timeline {
+    position: sticky;
+    top: 5rem;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    border-left: 1px solid var(--border);
+    padding-left: 1.5rem;
+    margin-left: 2rem;
+  }
+
+  .timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .timeline-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    transition: transform 0.2s;
+  }
+
+  .timeline-item:hover {
+    transform: translateX(4px);
+  }
+
+  .timeline-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    margin-top: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .timeline-item:hover .timeline-dot {
+    background: var(--accent);
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 768px) {
+    .timeline {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    const toggle = document.querySelector('.timeline-toggle');
+    const content = document.querySelector('.timeline-content');
+    
+    if (toggle && content) {
+      toggle.addEventListener('click', () => {
+        content.classList.toggle('collapsed');
+        const svg = toggle.querySelector('svg path');
+        if (svg) {
+          const isCollapsed = content.classList.contains('collapsed');
+          svg.setAttribute('d', isCollapsed ? 'M4 10L8 6L12 10' : 'M4 6L8 10L12 6');
+        }
+      });
+    }
+  })();
+</script>
 ```
 
-### 测试清单
+**布局集成：**
 
-- [x] Tag 显示有适当间距
-- [x] 悬停效果流畅
-- [x] 点击 tag 正确筛选文章
-- [x] URL 更新不刷新页面
-- [x] 选中的 tag 按钮显示 "on" 状态
-- [x] "全部" 按钮显示所有文章
-- [x] 浏览器前进/后退正常
-- [x] 直接访问 `?tag=X` 加载筛选后的视图
-- [x] 小屏幕下 tag 换行显示
-- [x] 无障碍：aria-label 存在
+`src/pages/blog.astro`:
+```astro
+<section class="sec">
+  <div class="posts-container">
+    <ol class="posts" id="posts-list">
+      <!-- 文章列表 -->
+    </ol>
+    <Timeline posts={posts} />
+  </div>
+</section>
+```
+
+`src/styles/global.css`:
+```css
+.posts-container {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem;
+  align-items: start;
+}
+```
+
+**交互效果：**
+- 悬停时文章右移 4px
+- 圆点放大并高亮
+- 置顶文章圆点始终高亮
+- 点击标题收起/展开
 
 ---
 
-## 部署到 Cloudflare Pages
+## 五、部署与优化
 
-### 1. 构建项目
+### 5.1 Cloudflare Pages 部署
 
-```bash
-npm run build
-```
+1. **构建项目**
+   ```bash
+   npm run build
+   ```
 
-### 2. 部署到 Cloudflare
+2. **配置 Cloudflare Pages**
+   - 连接 GitHub 仓库
+   - 构建命令：`npm run build`
+   - 输出目录：`dist`
+   - 框架预设：Astro
 
-1. 在 [Cloudflare Dashboard](https://dash.cloudflare.com/) 创建 Pages 项目
-2. 连接 GitHub 仓库
-3. 设置构建命令：`npm run build`
-4. 设置输出目录：`dist`
+3. **自定义域名**
+   - 在 Cloudflare Dashboard 添加自定义域名
+   - 自动配置 HTTPS
 
-### 3. 配置自定义域名（可选）
+### 5.2 性能优化
 
-在 Cloudflare Pages 设置中添加自定义域名，自动配置 HTTPS。
+**构建优化：**
+- 使用 SSG（静态生成），避免 SSR
+- 图片懒加载
+- 字体子集化
 
-## 总结
+**运行时优化：**
+- 零 JavaScript 输出（按需 hydration）
+- 客户端筛选使用原生 DOM 操作，无框架依赖
+- 避免重排重绘，使用 `transform` 动画
 
-使用 Astro + TailwindCSS + Cloudflare Pages 是一个成本极低、性能优秀、易于维护的博客方案。适合个人开发者和技术写作者。
+### 5.3 SEO 优化
 
-### 技术栈总结
-
-| 模块 | 选择 | 说明 |
-|------|------|------|
-| 博客框架 | Astro | 静态生成，零 JS 输出 |
-| 样式 | TailwindCSS | 原子化 CSS，快速开发 |
-| 内容 | Markdown/MDX | 写作体验极佳 |
-| 托管 | GitHub | 免费，版本控制 |
-| 部署 | Cloudflare Pages | 全球 CDN，自动 HTTPS |
-
-### 核心优化点
-
-- **Tag 展示：** Stone 色系 + 微交互 + 间距优化
-- **客户端筛选：** 无刷新筛选，URL 同步
-- **无障碍设计：** aria-label，键盘导航
-- **性能优化：** 零外部依赖，直接 DOM 操作
-
-## 下一步
-
-- [ ] 添加评论系统（Giscus）
-- [ ] 添加搜索功能（Pagefind）
-- [ ] 添加网站统计（Umami）
-- [ ] 配置 RSS 订阅
-- [ ] 实现 tag 云图展示
-- [ ] 添加文章推荐算法
+- 语义化 HTML 标签（`<article>`, `<time>`, `<aside>`）
+- Meta 标签完整（title, description, Open Graph）
+- 结构化数据（JSON-LD）
+- 站点地图（sitemap.xml）
+- RSS 订阅
 
 ---
 
-**更新时间**: 2025-05-14  
-**阅读时间**: 8 分钟  
-**Git Commit**: `88c2ec3` - 优化 tag 展示和筛选功能
+## 六、最佳实践总结
+
+### 6.1 代码组织
+
+- **工具函数抽象**：排序、分组、格式化等通用逻辑放入 `src/utils/`
+- **组件复用**：时间线、Tag 等可复用 UI 放入 `src/components/`
+- **类型安全**：使用 TypeScript，定义清晰的接口
+
+### 6.2 内容管理
+
+- **Frontmatter 规范**：统一字段命名和格式
+- **标签命名**：使用有意义的关键词，避免过长
+- **置顶策略**：仅对重要文章使用 `pinned: true`
+
+### 6.3 交互设计
+
+- **无刷新筛选**：使用 `history.pushState` 更新 URL
+- **浏览器导航**：监听 `popstate` 事件支持前进后退
+- **无障碍**：添加 `aria-label`，键盘可访问
+
+### 6.4 性能优先
+
+- **避免框架依赖**：客户端交互使用原生 JavaScript
+- **减少重排**：使用 `transform` 而非 `top/left`
+- **按需加载**：图片、字体懒加载
+
+---
+
+## 七、后续扩展
+
+- [ ] 评论系统（Giscus）
+- [ ] 全文搜索（Pagefind）
+- [ ] 网站统计（Umami）
+- [ ] RSS 订阅
+- [ ] Tag 云图
+- [ ] 相关文章推荐
+- [ ] 多语言支持（i18n）
+
+---
+
+**更新时间**: 2026-05-14  
+**阅读时间**: 12 分钟  
+**Git Commit**: `a5702c5` - 添加时间线组件并抽象排序逻辑
