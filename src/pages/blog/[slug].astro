@@ -8,7 +8,6 @@ import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import { toString } from 'mdast-util-to-string';
 import Giscus from '../../components/Giscus.astro';
-import Timeline from '../../components/Timeline.astro';
 import { t, getCurrentLang } from '../../utils/i18n';
 
 const lang = getCurrentLang(false);
@@ -27,14 +26,16 @@ if (!post) {
   Astro.redirect('/blog');
 }
 
-const allPosts = await getCollection('blog');
+const relatedPosts = post.data.tags.length > 0
+  ? (await getCollection('blog'))
+      .filter(p => {
+        if (p.slug === slug) return false;
+        return p.data.tags.some(tag => post.data.tags.includes(tag));
+      })
+      .slice(0, 3)
+  : [];
 
-const relatedPosts = allPosts
-  .filter(p => {
-    if (p.slug === slug) return false;
-    return p.data.tags.some(tag => post.data.tags.includes(tag));
-  })
-  .slice(0, 3);
+const allPosts = await getCollection('blog');
 
 const sortedPosts = allPosts.sort((a, b) => {
   const dateA = a.data.pubDate || new Date(0);
@@ -97,11 +98,6 @@ const htmlContent = markdownHtml.value?.toString() || '';
       </nav>
     </aside>
   )}
-  
-  <!-- Right Timeline -->
-  <aside class="article-timeline">
-    <Timeline posts={allPosts} />
-  </aside>
   
   <!-- Main Content -->
   <article class="article-content rise">
@@ -232,20 +228,6 @@ const htmlContent = markdownHtml.value?.toString() || '';
       color: var(--ink);
     }
 
-    /* Right Timeline */
-    .article-timeline {
-      position: fixed;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 280px;
-      padding: 100px 1.5rem 2rem 1.5rem;
-      overflow-y: auto;
-      background: var(--bg);
-      z-index: 100;
-      border-left: 1px solid var(--border);
-    }
-
     /* Main Content */
     .article-content {
       max-width: 720px;
@@ -255,8 +237,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
 
     @media (min-width: 1024px) {
       .article-content {
-        margin-left: calc(50% - 360px);
-        margin-right: calc(50% - 360px);
+        margin-left: 240px;
         padding: 0 2rem;
       }
     }
