@@ -237,6 +237,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
 
     @media (min-width: 1024px) {
       .article-content {
+        margin-left: 240px;
         padding: 0 2rem;
       }
     }
@@ -244,6 +245,13 @@ const htmlContent = markdownHtml.value?.toString() || '';
     @media (min-width: 1200px) {
       .article-content {
         padding: 0 2.5rem;
+      }
+    }
+
+    /* 移动端隐藏 TOC */
+    @media (max-width: 1023px) {
+      .article-toc {
+        display: none;
       }
     }
 
