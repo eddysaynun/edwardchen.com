@@ -162,6 +162,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
+"langchain-langgraph-tutorial.md": {
+	id: "langchain-langgraph-tutorial.md";
+  slug: "langchain-langgraph-tutorial";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "test-post.md": {
 	id: "test-post.md";
   slug: "test-post";

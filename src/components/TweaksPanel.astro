@@ -1,3 +1,9 @@
+---
+import { getCurrentLang, setLang, t } from '../utils/i18n';
+
+const currentLang = getCurrentLang();
+---
+
 <div id="tweaks-panel" class="tweaks-panel">
   <style>
     .tweaks-panel {
@@ -96,33 +102,42 @@
     }
   </style>
   
-  <button class="tweaks-toggle" aria-label="自定义设置">
+  <button class="tweaks-toggle" aria-label="设置">
     ⚙️
   </button>
   
   <div class="tweaks-menu">
     <div class="tweak-group">
-      <span class="tweak-label">主题</span>
+      <span class="tweak-label">{t('settings.theme', currentLang)}</span>
       <div class="tweak-options">
-        <button class="tweak-option active" data-setting="theme" data-value="light">浅色</button>
-        <button class="tweak-option" data-setting="theme" data-value="dark">深色</button>
+        <button class="tweak-option" data-setting="theme" data-value="light">{t('settings.theme.light', currentLang)}</button>
+        <button class="tweak-option" data-setting="theme" data-value="dark">{t('settings.theme.dark', currentLang)}</button>
+        <button class="tweak-option active" data-setting="theme" data-value="auto">{t('settings.theme.auto', currentLang)}</button>
       </div>
     </div>
     
     <div class="tweak-group">
-      <span class="tweak-label">字体</span>
+      <span class="tweak-label">{t('settings.typeface', currentLang)}</span>
       <div class="tweak-options">
-        <button class="tweak-option active" data-setting="typeface" data-value="sans">无衬线</button>
-        <button class="tweak-option" data-setting="typeface" data-value="serif">衬线</button>
+        <button class="tweak-option active" data-setting="typeface" data-value="sans">{t('settings.typeface.sans', currentLang)}</button>
+        <button class="tweak-option" data-setting="typeface" data-value="serif">{t('settings.typeface.serif', currentLang)}</button>
       </div>
     </div>
     
     <div class="tweak-group">
-      <span class="tweak-label">密度</span>
+      <span class="tweak-label">{t('settings.density', currentLang)}</span>
       <div class="tweak-options">
-        <button class="tweak-option" data-setting="density" data-value="compact">紧凑</button>
-        <button class="tweak-option active" data-setting="density" data-value="normal">正常</button>
-        <button class="tweak-option" data-setting="density" data-value="comfy">宽松</button>
+        <button class="tweak-option" data-setting="density" data-value="compact">{t('settings.density.compact', currentLang)}</button>
+        <button class="tweak-option active" data-setting="density" data-value="normal">{t('settings.density.normal', currentLang)}</button>
+        <button class="tweak-option" data-setting="density" data-value="comfy">{t('settings.density.comfy', currentLang)}</button>
+      </div>
+    </div>
+
+    <div class="tweak-group">
+      <span class="tweak-label">{t('settings.language', currentLang)}</span>
+      <div class="tweak-options">
+        <button class="tweak-option" data-setting="language" data-value="zh-CN">{t('settings.language.zh-CN', currentLang)}</button>
+        <button class="tweak-option" data-setting="language" data-value="en">{t('settings.language.en', currentLang)}</button>
       </div>
     </div>
   </div>
@@ -146,6 +161,24 @@
         }
       });
       
+      // 应用主题
+      function applyTheme(theme) {
+        if (theme === 'auto') {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        } else {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+      }
+      
+      // 监听系统主题变化
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        const savedTheme = localStorage.getItem('edwardchen-theme');
+        if (savedTheme === 'auto') {
+          applyTheme('auto');
+        }
+      });
+      
       // Handle option clicks
       options.forEach(option => {
         option.addEventListener('click', () => {
@@ -160,7 +193,7 @@
           
           // Apply setting
           if (setting === 'theme') {
-            document.documentElement.setAttribute('data-theme', value);
+            applyTheme(value);
             localStorage.setItem('edwardchen-theme', value);
           } else if (setting === 'typeface') {
             document.documentElement.setAttribute('data-typeface', value);
@@ -168,19 +201,22 @@
           } else if (setting === 'density') {
             document.documentElement.setAttribute('data-density', value);
             localStorage.setItem('edwardchen-density', value);
+          } else if (setting === 'language') {
+            // 语言切换需要刷新页面
+            localStorage.setItem('edwardchen-lang', value);
+            window.location.reload();
           }
         });
       });
       
       // Load saved preferences
-      const savedTheme = localStorage.getItem('edwardchen-theme');
+      const savedTheme = localStorage.getItem('edwardchen-theme') || 'auto';
       const savedTypeface = localStorage.getItem('edwardchen-typeface');
       const savedDensity = localStorage.getItem('edwardchen-density');
+      const savedLang = localStorage.getItem('edwardchen-lang');
       
-      if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateActiveOption('theme', savedTheme);
-      }
+      applyTheme(savedTheme);
+      updateActiveOption('theme', savedTheme);
       
       if (savedTypeface) {
         document.documentElement.setAttribute('data-typeface', savedTypeface);
@@ -190,6 +226,10 @@
       if (savedDensity) {
         document.documentElement.setAttribute('data-density', savedDensity);
         updateActiveOption('density', savedDensity);
+      }
+      
+      if (savedLang) {
+        updateActiveOption('language', savedLang);
       }
       
       function updateActiveOption(setting, value) {
