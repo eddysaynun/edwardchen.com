@@ -7,6 +7,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import { toString } from 'mdast-util-to-string';
+import Giscus from '../../components/Giscus.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -163,6 +164,17 @@ const htmlContent = markdownHtml.value?.toString() || '';
         </a>
       )}
     </nav>
+
+    <!-- Giscus Comments -->
+    <Giscus 
+      repo="eddysaynun/edwardchen.com"
+      repoId="R_kgDOScJuxg"
+      category="Comments"
+      categoryId="DIC_kwDOScJuxs4CwKJp"
+      mapping="pathname"
+      theme="preferred_color_scheme"
+      lang="zh-CN"
+    />
   </article>
 
   <style>

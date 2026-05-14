@@ -1,0 +1,96 @@
+---
+interface Props {
+  repo: string;
+  repoId: string;
+  category: string;
+  categoryId: string;
+  mapping?: 'pathname' | 'title' | 'url' | 'og:title';
+  strict?: '0' | '1';
+  reactionsEnabled?: '0' | '1';
+  emitMetadata?: '0' | '1';
+  inputPosition?: 'top' | 'bottom';
+  theme?: 'light' | 'dark' | 'dark_dimmed' | 'transparent_dark' | 'preferred_color_scheme';
+  lang?: string;
+}
+
+const {
+  repo = 'eddysaynun/edwardchen.com',
+  repoId,
+  category = 'Comments',
+  categoryId,
+  mapping = 'pathname',
+  strict = '0',
+  reactionsEnabled = '1',
+  emitMetadata = '0',
+  inputPosition = 'bottom',
+  theme = 'preferred_color_scheme',
+  lang = 'zh-CN',
+} = Astro.props;
+---
+
+<div class="giscus-container">
+  <div class="giscus-header">
+    <h3>💬 评论</h3>
+  </div>
+  
+  <script
+    src="https://giscus.app/client.js"
+    data-repo={repo}
+    data-repo-id={repoId}
+    data-category={category}
+    data-category-id={categoryId}
+    data-mapping={mapping}
+    data-strict={strict}
+    data-reactions-enabled={reactionsEnabled}
+    data-emit-metadata={emitMetadata}
+    data-input-position={inputPosition}
+    data-theme={theme}
+    data-lang={lang}
+    crossorigin="anonymous"
+    async
+  >
+  </script>
+
+  <noscript>
+    请启用 JavaScript 以查看评论。
+  </noscript>
+</div>
+
+<style>
+  .giscus-container {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .giscus-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .giscus-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  /* Giscus 主题适配 */
+  .giscus-frame {
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* 暗色模式适配 */
+  [data-theme='dark'] .giscus-frame {
+    filter: brightness(0.9);
+  }
+
+  /* 响应式 */
+  @media (max-width: 640px) {
+    .giscus-container {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+    }
+  }
+</style>
