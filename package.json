@@ -6,10 +6,13 @@
     "dev": "npx astro dev",
     "start": "npx astro dev",
     "build": "npx astro build",
-    "preview": "npx astro preview",
-    "astro": "npx astro"
+    "preview": "npm run build && wrangler dev",
+    "astro": "npx astro",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "11",
     "@astrojs/tailwind": "^5.1.0",
     "astro": "^4.16.0",
     "rehype-highlight": "^7.0.2",
@@ -22,7 +25,8 @@
     "rehype-stringify": "^10.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
-    "remark-gfm": "^4.0.0",
-    "unified": "^11.0.5"
+    "unified": "^11.0.5",
+    "wrangler": "^4.90.1",
+    "remark-gfm": "^4.0.0"
   }
 }
