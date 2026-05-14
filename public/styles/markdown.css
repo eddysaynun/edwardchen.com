@@ -18,23 +18,26 @@
 
 .markdown-body h2 {
   font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--muted);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
   margin: 2rem 0 1rem;
-  letter-spacing: 0.04em;
-  text-transform: lowercase;
+  letter-spacing: -0.01em;
 }
 
 .markdown-body h2::before {
   content: '// ';
   color: var(--muted-2);
+  font-family: var(--mono);
+  font-size: 22px;
 }
 
 .markdown-body h3 {
   font-family: var(--sans);
   font-size: 18px;
   font-weight: 600;
+  line-height: 1.4;
   color: var(--ink);
   margin: 1.5rem 0 0.75rem;
 }
@@ -45,6 +48,7 @@
   font-weight: 500;
   color: var(--ink-2);
   margin: 1.25rem 0 0.5rem;
+  letter-spacing: 0.02em;
 }
 
 .markdown-body p {
@@ -202,6 +206,14 @@
 
   .markdown-body h1 {
     font-size: 24px;
+  }
+
+  .markdown-body h2 {
+    font-size: 20px;
+  }
+
+  .markdown-body h3 {
+    font-size: 17px;
   }
 
   .markdown-body table {
