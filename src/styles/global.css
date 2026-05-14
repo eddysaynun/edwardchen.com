@@ -547,6 +547,17 @@ ol.posts {
   min-width: 0;
 }
 
+/* 响应式：小屏幕隐藏 Timeline */
+@media (max-width: 1024px) {
+  .posts-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .timeline {
+    display: none;
+  }
+}
+
 /* Projects Grid */
 .projects {
   display: grid;
