@@ -11,8 +11,8 @@ echo "📝 同步 Obsidian 博客文章..."
 # 确保目录存在
 mkdir -p "$PROJECT_BLOG"
 
-# 同步文件（复制而不是链接）
-rsync -av --delete "$OBSIDIAN_BLOG/" "$PROJECT_BLOG/"
+# 同步文件（复制而不是链接），排除 README.md
+rsync -av --delete --exclude="README.md" "$OBSIDIAN_BLOG/" "$PROJECT_BLOG/"
 
 # 显示同步结果
 echo "✅ 同步完成！"
