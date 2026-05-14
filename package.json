@@ -26,6 +26,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "unified": "^11.0.5",
-    "wrangler": "^4.90.1"
+    "wrangler": "^4.90.1",
+    "remark-gfm": "^4.0.0"
   }
 }

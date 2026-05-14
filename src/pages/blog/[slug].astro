@@ -5,6 +5,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
+import remarkGfm from 'remark-gfm';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -42,6 +43,7 @@ const nextPost = sortedPosts[postIndex - 1];
 // Render markdown to HTML using unified + remark
 const markdownHtml = await unified()
   .use(remarkParse)
+  .use(remarkGfm)
   .use(remarkRehype)
   .use(rehypeStringify)
   .process(post.body);
