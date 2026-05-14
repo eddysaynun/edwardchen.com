@@ -6,7 +6,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
-import remarkToc from 'remark-toc';
+import { toString } from 'mdast-util-to-string';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -41,13 +41,27 @@ const postIndex = sortedPosts.findIndex(p => p.slug === slug);
 const prevPost = sortedPosts[postIndex + 1];
 const nextPost = sortedPosts[postIndex - 1];
 
-// Extract TOC from markdown
-const tocResult = await unified()
-  .use(remarkParse)
-  .use(remarkToc, { heading: 'h2', tight: true, ordered: false, ulTag: 'ul', ulItemTag: 'li', linkClass: 'toc-link' })
-  .process(post.body);
+// Extract TOC from markdown using AST
+const ast = unified().use(remarkParse).parse(post.body);
+const tocHeadings = [];
 
-const tocHtml = tocResult.contents.toString();
+function extractHeadings(node) {
+  if (node.type === 'heading' && node.depth === 2) {
+    const text = toString(node);
+    const id = text
+      .toLowerCase()
+      .replace(/[^\w\s\u4e00-\u9fa5]/g, '-')
+      .replace(/\s+/g, '-')
+      .trim();
+    tocHeadings.push({ id, text });
+  }
+  
+  if (node.children) {
+    node.children.forEach(extractHeadings);
+  }
+}
+
+extractHeadings(ast);
 
 // Render markdown to HTML using unified + remark
 const markdownHtml = await unified()
@@ -58,22 +72,6 @@ const markdownHtml = await unified()
   .process(post.body);
 
 const htmlContent = markdownHtml.value?.toString() || '';
-
-// Parse TOC to extract headings
-const tocHeadings = [];
-const tocMatch = tocHtml.match(/<li><a href="#([^"]+)">([^<]+)<\/a><\/li>/g);
-if (tocMatch) {
-  tocMatch.forEach(item => {
-    const idMatch = item.match(/href="#([^"]+)"/);
-    const textMatch = item.match(/>([^<]+)</);
-    if (idMatch && textMatch) {
-      tocHeadings.push({
-        id: idMatch[1],
-        text: textMatch[1]
-      });
-    }
-  });
-}
 ---
 
 <Layout title={`${post.data.title} - Edward Chen`}>
