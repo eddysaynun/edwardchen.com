@@ -64,7 +64,12 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
 
     <!-- Tweaks Panel -->
     <div id="tweaks-panel" class="tweaks-panel">
-      <button class="tweaks-toggle" aria-label="自定义设置">⚙️</button>
+      <button class="tweaks-toggle" aria-label="自定义设置">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
       <div class="tweaks-menu">
         <div class="tweak-group">
           <span class="tweak-label">主题</span>
@@ -143,18 +148,83 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
     </script>
 
     <style>
-      .tweaks-panel { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
-      .tweaks-toggle { width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--bg); border: none; cursor: pointer; display: grid; place-items: center; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s; }
-      .tweaks-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
-      .tweaks-menu { position: absolute; bottom: 60px; right: 0; background: var(--bg); border: 1px solid var(--line-strong); border-radius: 12px; padding: 12px; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity 0.2s, transform 0.2s, visibility 0.2s; }
-      .tweaks-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
-      .tweak-group { margin-bottom: 12px; }
+      .tweaks-panel { position: fixed; bottom: 24px; right: 24px; z-index: 1000; }
+      .tweaks-toggle { 
+        width: 48px; 
+        height: 48px; 
+        border-radius: 50%; 
+        background: var(--bg); 
+        color: var(--ink); 
+        border: 1px solid var(--line-strong);
+        cursor: pointer; 
+        display: grid; 
+        place-items: center; 
+        font-size: 18px; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .tweaks-toggle:hover { 
+        transform: scale(1.05); 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        border-color: var(--ink-2);
+      }
+      .tweaks-toggle:active {
+        transform: scale(0.95);
+      }
+      .tweaks-menu { 
+        position: absolute; 
+        bottom: 64px; 
+        right: 0; 
+        background: var(--bg); 
+        border: 1px solid var(--line-strong); 
+        border-radius: 12px; 
+        padding: 16px; 
+        min-width: 200px; 
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12); 
+        opacity: 0; 
+        visibility: hidden; 
+        transform: translateY(12px) scale(0.95); 
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.2s;
+        backdrop-filter: blur(12px);
+      }
+      .tweaks-menu.open { 
+        opacity: 1; 
+        visibility: visible; 
+        transform: translateY(0) scale(1); 
+      }
+      .tweak-group { margin-bottom: 16px; }
       .tweak-group:last-child { margin-bottom: 0; }
-      .tweak-label { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 6px; display: block; letter-spacing: 0.04em; }
-      .tweak-options { display: flex; gap: 4px; }
-      .tweak-option { flex: 1; padding: 6px 8px; border: 1px solid var(--line-strong); background: transparent; color: var(--muted); border-radius: 6px; font-family: var(--mono); font-size: 11px; cursor: pointer; transition: all 0.15s; }
-      .tweak-option:hover { border-color: var(--ink-2); color: var(--ink); }
-      .tweak-option.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+      .tweak-label { 
+        font-family: var(--mono); 
+        font-size: 11px; 
+        color: var(--muted); 
+        margin-bottom: 8px; 
+        display: block; 
+        letter-spacing: 0.04em;
+      }
+      .tweak-options { display: flex; gap: 6px; }
+      .tweak-option { 
+        flex: 1; 
+        padding: 8px 10px; 
+        border: 1px solid var(--line-strong); 
+        background: transparent; 
+        color: var(--muted); 
+        border-radius: 8px; 
+        font-family: var(--mono); 
+        font-size: 11px; 
+        cursor: pointer; 
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .tweak-option:hover { 
+        border-color: var(--ink-2); 
+        color: var(--ink);
+        background: var(--panel);
+      }
+      .tweak-option.active { 
+        background: var(--ink); 
+        color: var(--bg); 
+        border-color: var(--ink);
+      }
     </style>
   </body>
 </html>
