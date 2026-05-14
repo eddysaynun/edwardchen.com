@@ -153,20 +153,20 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
         width: 48px; 
         height: 48px; 
         border-radius: 50%; 
-        background: var(--bg); 
+        background: rgba(255, 255, 255, 0.1); 
         color: var(--ink); 
-        border: 1px solid var(--line-strong);
         cursor: pointer; 
         display: grid; 
         place-items: center; 
         font-size: 18px; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(8px);
       }
       .tweaks-toggle:hover { 
         transform: scale(1.05); 
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         border-color: var(--ink-2);
+        background: rgba(255, 255, 255, 0.15);
       }
       .tweaks-toggle:active {
         transform: scale(0.95);
