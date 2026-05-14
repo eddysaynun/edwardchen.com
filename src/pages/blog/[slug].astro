@@ -69,9 +69,13 @@ const htmlContent = markdownHtml.value?.toString() || '';
       <h1>{post.data.title}</h1>
       <p class="lede mb-6">{post.data.description}</p>
       
-      <div class="row">
+      <div class="row gap-2 flex-wrap">
         {post.data.tags.map((tag) => (
-          <span class="pill">{tag}</span>
+          <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
+             class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
+             aria-label={`查看 ${tag} 标签的文章`}>
+            #{tag}
+          </a>
         ))}
       </div>
     </header>

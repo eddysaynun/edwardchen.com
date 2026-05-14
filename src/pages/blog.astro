@@ -39,12 +39,12 @@ const allTags = Object.entries(tagCounts)
   <!-- Tags Filter -->
   <section class="sec rise d1">
     <div class="tags">
-      <button class="tag on">
+      <button class="tag" data-tag="all">
         全部
         <span class="ct">({posts.length})</span>
       </button>
       {allTags.map((tag) => (
-        <button class="tag">
+        <button class="tag" data-tag={tag}>
           {tag}
           <span class="ct">({tagCounts[tag]})</span>
         </button>
@@ -54,9 +54,9 @@ const allTags = Object.entries(tagCounts)
 
   <!-- Posts List -->
   <section class="sec rise d2">
-    <ol class="posts">
+    <ol class="posts" id="posts-list">
       {posts.map((post) => (
-        <li class={`post ${post.data.pinned ? 'pinned' : ''}`}>
+        <li class={`post ${post.data.pinned ? 'pinned' : ''}`} data-tags={post.data.tags.join(',')}>
           <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
             {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
           </time>
@@ -65,9 +65,13 @@ const allTags = Object.entries(tagCounts)
               <a href={`/blog/${post.slug}`}>{post.data.title}</a>
             </h3>
             <p>{post.data.description}</p>
-            <div class="row">
+            <div class="row gap-2 flex-wrap">
               {post.data.tags.map((tag) => (
-                <span class="pill">{tag}</span>
+                <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
+                   class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-2.5 py-0.5"
+                   aria-label={`查看 ${tag} 标签的文章`}>
+                    #{tag}
+                </a>
               ))}
             </div>
           </div>
@@ -78,4 +82,64 @@ const allTags = Object.entries(tagCounts)
       ))}
     </ol>
   </section>
+
+  <script is:inline>
+    (function() {
+      const tagButtons = document.querySelectorAll('.tag');
+      const posts = document.querySelectorAll('#posts-list .post');
+      const urlParams = new URLSearchParams(window.location.search);
+      const selectedTag = urlParams.get('tag');
+
+      // 高亮选中的 tag 按钮
+      if (selectedTag) {
+        tagButtons.forEach(btn => {
+          btn.classList.toggle('on', btn.dataset.tag === selectedTag);
+        });
+        filterPosts(selectedTag);
+      } else {
+        tagButtons[0]?.classList.add('on');
+      }
+
+      // 点击 tag 按钮筛选
+      tagButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tag = btn.dataset.tag;
+          
+          // 更新按钮状态
+          tagButtons.forEach(b => b.classList.remove('on'));
+          btn.classList.add('on');
+
+          // 更新 URL（不刷新页面）
+          const newUrl = tag === 'all' 
+            ? '/blog' 
+            : '/blog?tag=' + encodeURIComponent(tag);
+          history.pushState({ tag: tag }, '', newUrl);
+
+          // 筛选文章
+          filterPosts(tag);
+        });
+      });
+
+      // 筛选函数
+      function filterPosts(tag) {
+        posts.forEach(post => {
+          const postTags = post.dataset.tags.split(',');
+          if (tag === 'all' || postTags.includes(tag)) {
+            post.style.display = '';
+          } else {
+            post.style.display = 'none';
+          }
+        });
+      }
+
+      // 支持浏览器前进后退
+      window.addEventListener('popstate', function(e) {
+        var tag = (e.state && e.state.tag) || 'all';
+        tagButtons.forEach(function(btn) {
+          btn.classList.toggle('on', btn.dataset.tag === tag);
+        });
+        filterPosts(tag);
+      });
+    })();
+  </script>
 </Layout>
