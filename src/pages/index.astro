@@ -2,14 +2,30 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-// 获取所有博客文章，按日期排序
-const allPosts = (await getCollection('blog')).sort((a, b) => {
+// 获取所有博客文章
+const allPostsRaw = await getCollection('blog');
+
+// 分离置顶和普通文章
+const pinnedPosts = allPostsRaw.filter(post => post.data.pinned);
+const normalPosts = allPostsRaw.filter(post => !post.data.pinned);
+
+// 分别按日期排序
+const sortedPinned = pinnedPosts.sort((a, b) => {
   const dateA = a.data.pubDate || new Date(0);
   const dateB = b.data.pubDate || new Date(0);
   return dateB.getTime() - dateA.getTime();
 });
 
-// 获取最新的 3 篇文章
+const sortedNormal = normalPosts.sort((a, b) => {
+  const dateA = a.data.pubDate || new Date(0);
+  const dateB = b.data.pubDate || new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+// 合并：置顶在前，普通在后
+const allPosts = [...sortedPinned, ...sortedNormal];
+
+// 获取最新的 3 篇文章（优先展示置顶）
 const latestPosts = allPosts.slice(0, 3);
 ---
 
