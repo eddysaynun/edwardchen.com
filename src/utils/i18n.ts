@@ -36,11 +36,6 @@ export const translations: Translations = {
   'blog.all': { 'zh-CN': '全部', en: 'All' },
   'blog.timeline': { 'zh-CN': '时间线', en: 'Timeline' },
   'blog.toc': { 'zh-CN': '目录', en: 'Table of Contents' },
-  'blog.relatedPosts': { 'zh-CN': '相关文章', en: 'Related Posts' },
-  'blog.prevPost': { 'zh-CN': '← 上一篇：', en: '← Previous: ' },
-  'blog.nextPost': { 'zh-CN': '下一篇：', en: 'Next: ' },
-  'blog.backToList': { 'zh-CN': '← 返回文章列表', en: '← Back to List' },
-  'blog.readTime': { 'zh-CN': '约 {min} 分钟阅读', en: 'About {min} min read' },
   'blog.pinned': { 'zh-CN': '置顶', en: 'Pinned' },
   'blog.comments': { 'zh-CN': '💬 评论', en: '💬 Comments' },
   
@@ -48,14 +43,17 @@ export const translations: Translations = {
   'projects.title': { 'zh-CN': '项目 - Edward Chen', en: 'Projects - Edward Chen' },
   'projects.meta': { 'zh-CN': '开源项目 · 工具 · 实验', en: 'Open Source · Tools · Experiments' },
   'projects.lede': { 'zh-CN': '我参与和创建的项目，包括开源工具、个人实验和技术演示。', en: 'Projects I\'ve worked on and created, including open source tools, personal experiments, and tech demos.' },
-  'projects.active': { 'zh-CN': '活跃', en: 'Active' },
-  'projects.archive': { 'zh-CN': '归档', en: 'Archive' },
-  'projects.wip': { 'zh-CN': '开发中', en: 'WIP' },
+  'projects.status.active': { 'zh-CN': '活跃', en: 'Active' },
+  'projects.status.wip': { 'zh-CN': '开发中', en: 'WIP' },
+  'projects.status.archive': { 'zh-CN': '归档', en: 'Archive' },
   
   // 关于
   'about.title': { 'zh-CN': '关于 - Edward Chen', en: 'About - Edward Chen' },
   'about.meta': { 'zh-CN': '个人介绍 · 技能 · 经历', en: 'Introduction · Skills · Experience' },
-  'about.greeting': { 'zh-CN': '你好！我是 Edward，一名热爱技术的开发者。', en: 'Hello! I\'m Edward, a technology-loving developer.' },
+  'about.intro1': { 'zh-CN': '你好！我是 Edward Chen，一名个人开发者、AI 爱好者和技术写作者。', en: 'Hello! I\'m Edward Chen, an independent developer, AI enthusiast, and technical writer.' },
+  'about.intro2': { 'zh-CN': '我喜欢构建有趣的东西，探索人工智能的可能性，并分享我的学习旅程。这个博客是我记录技术笔记、项目展示和思考的地方。', en: 'I love building interesting things, exploring AI possibilities, and sharing my learning journey. This blog is where I record technical notes, showcase projects, and share my thoughts.' },
+  'about.techStack': { 'zh-CN': '技术栈', en: 'Tech Stack' },
+  'about.contact': { 'zh-CN': '联系方式', en: 'Contact' },
   
   // 设置
   'settings.theme': { 'zh-CN': '主题', en: 'Theme' },
@@ -76,6 +74,13 @@ export const translations: Translations = {
   // 通用
   'common.unpublished': { 'zh-CN': '未发布', en: 'Unpublished' },
   'common.yearMonth': { 'zh-CN': '{year}年{month}月', en: '{month} {year}' },
+  
+  // 文章详情页
+  'post.readTime': { 'zh-CN': '约 {minutes} 分钟阅读', en: 'About {minutes} min read' },
+  'post.related': { 'zh-CN': '相关文章', en: 'Related Posts' },
+  'post.prev': { 'zh-CN': '上一篇：{title}', en: 'Previous: {title}' },
+  'post.next': { 'zh-CN': '下一篇：{title}', en: 'Next: {title}' },
+  'post.backToList': { 'zh-CN': '返回文章列表', en: 'Back to List' },
 };
 
 /**
@@ -96,16 +101,22 @@ export function t(key: string, lang: Language = 'zh-CN', params?: Record<string,
 
 /**
  * 获取当前语言
+ * @param isClient 是否在客户端
  */
-export function getCurrentLang(): Language {
-  const saved = localStorage.getItem('edwardchen-lang') as Language;
-  if (saved && (saved === 'zh-CN' || saved === 'en')) {
-    return saved;
+export function getCurrentLang(isClient = true): Language {
+  if (isClient) {
+    const saved = localStorage.getItem('edwardchen-lang') as Language;
+    if (saved && (saved === 'zh-CN' || saved === 'en')) {
+      return saved;
+    }
+    
+    // 默认使用浏览器语言
+    const browserLang = navigator.language;
+    return browserLang.startsWith('zh') ? 'zh-CN' : 'en';
   }
   
-  // 默认使用浏览器语言
-  const browserLang = navigator.language;
-  return browserLang.startsWith('zh') ? 'zh-CN' : 'en';
+  // 服务端默认返回 zh-CN
+  return 'zh-CN';
 }
 
 /**

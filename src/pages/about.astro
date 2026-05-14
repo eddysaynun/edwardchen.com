@@ -1,28 +1,31 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { t, getCurrentLang } from '../utils/i18n';
+
+const lang = getCurrentLang(false);
 ---
 
-<Layout title="关于 - Edward Chen">
+<Layout title={t('about.title', lang)}>
   <section class="hero rise">
     <div class="meta">
-      <span>关于我</span>
+      <span>{t('about.meta', lang)}</span>
     </div>
     
-    <h1>关于</h1>
+    <h1>{t('nav.about', lang)}</h1>
   </section>
 
   <section class="sec rise d1">
     <div class="prose max-w-none">
       <p class="text-muted text-base leading-relaxed">
-        你好！我是 Edward Chen，一名个人开发者、AI 爱好者和技术写作者。
+        {t('about.intro1', lang)}
       </p>
       
       <p class="text-muted text-base leading-relaxed">
-        我喜欢构建有趣的东西，探索人工智能的可能性，并分享我的学习旅程。这个博客是我记录技术笔记、项目展示和思考的地方。
+        {t('about.intro2', lang)}
       </p>
 
       <div class="mt-8">
-        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// 技术栈</h2>
+        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// {t('about.techStack', lang)}</h2>
         <div class="flex flex-wrap gap-2">
           <span class="pill">Java</span>
           <span class="pill">Python</span>
@@ -35,7 +38,7 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <div class="mt-8">
-        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// 联系方式</h2>
+        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// {t('about.contact', lang)}</h2>
         <div class="links">
           <a href="https://github.com/eddysaynun" target="_blank" rel="noopener">GitHub</a>
           <a href="https://x.com/eddysaynun" target="_blank" rel="noopener">Twitter</a>

@@ -2,6 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { sortPostsByPinnedAndDate } from '../utils/posts';
+import { t, getCurrentLang } from '../utils/i18n';
+
+const lang = getCurrentLang(false);
 
 // 获取所有博客文章
 const allPostsRaw = await getCollection('blog');
@@ -18,26 +21,26 @@ const latestPosts = allPosts.slice(0, 3);
   <section class="hero rise">
     <div class="meta">
       <span class="dot"></span>
-      <span>个人开发者 · AI 爱好者 · 技术写作者</span>
+      <span>{t('home.meta', lang)}</span>
     </div>
     
     <h1>
-      你好，我是 <em>Edward</em>
+      {t('home.greeting', lang)} <em>Edward</em>
     </h1>
     
     <p class="lede">
-      我喜欢构建有趣的东西，探索 AI 的可能性，并分享我的学习旅程。这里是我的技术笔记、项目展示和思考记录。
+      {t('home.lede', lang)}
     </p>
     
     <div class="links">
       <a href="/blog">
-        阅读文章
+        {t('home.readPosts', lang)}
         <svg viewBox="0 0 13 13" fill="none">
           <path d="M2.5 6.5H10.5M10.5 6.5L7 3M10.5 6.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
       <a href="/projects">
-        查看项目
+        {t('home.viewProjects', lang)}
         <svg viewBox="0 0 13 13" fill="none">
           <path d="M2.5 6.5H10.5M10.5 6.5L7 3M10.5 6.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -54,15 +57,15 @@ const latestPosts = allPosts.slice(0, 3);
   <!-- Latest Posts -->
   <section class="sec rise d1">
     <div class="sec-head">
-      <h2>最新文章</h2>
-      <span class="aux"><a href="/blog">查看全部 →</a></span>
+      <h2>{t('home.latestPosts', lang)}</h2>
+      <span class="aux"><a href="/blog">{t('home.viewAll', lang)}</a></span>
     </div>
 
     <ol class="posts">
       {latestPosts.map((post) => (
         <li class={`post ${post.data.pinned ? 'pinned' : ''}`}>
           <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
-            {post.data.pubDate?.toLocaleDateString('zh-CN')}
+            {post.data.pubDate?.toLocaleDateString(lang)}
           </time>
           <div class="body">
             <h3>
@@ -86,15 +89,15 @@ const latestPosts = allPosts.slice(0, 3);
   <!-- Projects -->
   <section class="sec rise d2">
     <div class="sec-head">
-      <h2>项目</h2>
-      <span class="aux"><a href="/projects">查看全部 →</a></span>
+      <h2>{t('home.projects', lang)}</h2>
+      <span class="aux"><a href="/projects">{t('home.viewAll', lang)}</a></span>
     </div>
 
     <div class="projects">
       <!-- Project 1 -->
       <article class="project">
         <h4>
-          <span class="stat active" title="活跃"></span>
+          <span class="stat active" title={t('projects.active', lang)}></span>
           Hermes Agent
         </h4>
         <p>一个智能 AI 助手，支持多工具协作和自主任务执行。</p>
@@ -107,7 +110,7 @@ const latestPosts = allPosts.slice(0, 3);
       <!-- Project 2 -->
       <article class="project">
         <h4>
-          <span class="stat active" title="活跃"></span>
+          <span class="stat active" title={t('projects.active', lang)}></span>
           RAG Toolkit
         </h4>
         <p>简化 RAG 应用的开发工具包，支持多种向量数据库。</p>
@@ -120,7 +123,7 @@ const latestPosts = allPosts.slice(0, 3);
       <!-- Project 3 -->
       <article class="project">
         <h4>
-          <span class="stat wip" title="开发中"></span>
+          <span class="stat wip" title={t('projects.wip', lang)}></span>
           Personal Blog
         </h4>
         <p>基于 Astro 构建的静态博客，支持 Markdown 和自动部署。</p>
@@ -133,7 +136,7 @@ const latestPosts = allPosts.slice(0, 3);
       <!-- Project 4 -->
       <article class="project">
         <h4>
-          <span class="stat archive" title="归档"></span>
+          <span class="stat archive" title={t('projects.archive', lang)}></span>
           CLI Tools
         </h4>
         <p>一系列实用的命令行工具，用于日常开发任务。</p>
@@ -148,7 +151,7 @@ const latestPosts = allPosts.slice(0, 3);
   <!-- Now Page -->
   <section class="sec rise d3">
     <div class="sec-head">
-      <h2>正在进行</h2>
+      <h2>{t('home.now', lang)}</h2>
     </div>
 
     <div class="now">

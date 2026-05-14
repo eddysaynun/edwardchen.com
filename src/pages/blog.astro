@@ -3,6 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { sortPostsByPinnedAndDate } from '../utils/posts';
 import Timeline from '../components/Timeline.astro';
+import { t, getCurrentLang } from '../utils/i18n';
+
+const lang = getCurrentLang(false);
 
 // 获取所有博客文章
 const allPosts = await getCollection('blog');
@@ -23,22 +26,22 @@ const allTags = Object.entries(tagCounts)
   .map(([tag]) => tag);
 ---
 
-<Layout title="文章 - Edward Chen">
+<Layout title={t('blog.title', lang)}>
   <section class="hero rise">
     <div class="meta">
-      <span>技术笔记 · 学习记录 · 项目经验</span>
+      <span>{t('blog.meta', lang)}</span>
     </div>
     
-    <h1>文章</h1>
+    <h1>{t('nav.blog', lang)}</h1>
     
-    <p class="lede">记录技术探索、项目经验和学习心得。</p>
+    <p class="lede">{t('blog.lede', lang)}</p>
   </section>
 
   <!-- Tags Filter -->
   <section class="sec rise d1">
     <div class="tags">
       <button class="tag" data-tag="all">
-        全部
+        {t('blog.all', lang)}
         <span class="ct">({posts.length})</span>
       </button>
       {allTags.map((tag) => (
@@ -57,9 +60,9 @@ const allTags = Object.entries(tagCounts)
         {posts.map((post) => (
           <li class={`post ${post.data.pinned ? 'pinned' : ''}`} data-tags={post.data.tags.join(',')}>
             <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
-              {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
+              {post.data.pubDate?.toLocaleDateString(lang) || t('common.unpublished', lang)}
               {post.data.pinned && (
-                <span class="pinned-badge" title="置顶">📌</span>
+                <span class="pinned-badge" title={t('blog.pinned', lang)}>📌</span>
               )}
             </time>
             <div class="body">
