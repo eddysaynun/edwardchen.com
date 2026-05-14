@@ -62,12 +62,12 @@ const allTags = Object.entries(tagCounts)
           </time>
           <div class="body">
             <h3>
-              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+              <a href={`/blog/view?id=${post.slug}`}>{post.data.title}</a>
             </h3>
             <p>{post.data.description}</p>
             <div class="row gap-2 flex-wrap">
               {post.data.tags.map((tag) => (
-                <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
+                <a href={`/blog/view?id=${post.slug}&tag=${encodeURIComponent(tag)}`} 
                    class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-2.5 py-0.5"
                    aria-label={`查看 ${tag} 标签的文章`}>
                     #{tag}
