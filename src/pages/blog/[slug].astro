@@ -75,133 +75,120 @@ const htmlContent = markdownHtml.value?.toString() || '';
 ---
 
 <Layout title={`${post.data.title} - Edward Chen`}>
-  <div class="article-wrapper">
-    {tocHeadings.length > 0 && (
-      <aside class="article-toc">
-        <h3 class="toc-title">目录</h3>
-        <nav class="toc-nav">
-          <ul>
-            {tocHeadings.map((heading) => (
-              <li>
-                <a href={`#${heading.id}`} class="toc-link">
-                  {heading.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>
-    )}
-    
-    <div class="article-main">
-      <article class="article-content rise">
-        <header class="hero">
-          <div class="meta">
-            <time datetime={post.data.pubDate?.toISOString() || ''}>
-              {post.data.pubDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '未发布'}
-            </time>
-            <span>•</span>
-            <span>约 {Math.max(1, Math.ceil(post.body.length / 500))} 分钟阅读</span>
-            {post.data.pinned && (
-              <>
-                <span>•</span>
-                <span class="text-accent font-medium">置顶</span>
-              </>
-            )}
-          </div>
-          
-          <h1>{post.data.title}</h1>
-          <p class="lede mb-6">{post.data.description}</p>
-          
-          <div class="row gap-2 flex-wrap">
-            {post.data.tags.map((tag) => (
-              <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
-                 class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
-                 aria-label={`查看 ${tag} 标签的文章`}>
-                #{tag}
+  {tocHeadings.length > 0 && (
+    <aside class="article-toc">
+      <h3 class="toc-title">目录</h3>
+      <nav class="toc-nav">
+        <ul>
+          {tocHeadings.map((heading) => (
+            <li>
+              <a href={`#${heading.id}`} class="toc-link">
+                {heading.text}
               </a>
-            ))}
-          </div>
-        </header>
-
-        <section class="sec">
-          <div class="markdown-body">
-            <div set:html={htmlContent}></div>
-          </div>
-        </section>
-
-        {relatedPosts.length > 0 && (
-          <section class="sec">
-            <div class="sec-head">
-              <h2>相关文章</h2>
-            </div>
-            <div class="projects">
-              {relatedPosts.map((relatedPost) => (
-                <article class="project">
-                  <h4>
-                    <a href={`/blog/${relatedPost.slug}`}>{relatedPost.data.title}</a>
-                  </h4>
-                  <p>{relatedPost.data.description}</p>
-                </article>
-              ))}
-            </div>
-          </section>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+  )}
+  
+  <article class="article-content rise">
+    <header class="hero">
+      <div class="meta">
+        <time datetime={post.data.pubDate?.toISOString() || ''}>
+          {post.data.pubDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '未发布'}
+        </time>
+        <span>•</span>
+        <span>约 {Math.max(1, Math.ceil(post.body.length / 500))} 分钟阅读</span>
+        {post.data.pinned && (
+          <>
+            <span>•</span>
+            <span class="text-accent font-medium">置顶</span>
+          </>
         )}
+      </div>
+      
+      <h1>{post.data.title}</h1>
+      <p class="lede mb-6">{post.data.description}</p>
+      
+      <div class="row gap-2 flex-wrap">
+        {post.data.tags.map((tag) => (
+          <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
+             class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
+             aria-label={`查看 ${tag} 标签的文章`}>
+            #{tag}
+          </a>
+        ))}
+      </div>
+    </header>
 
-        <nav class="sec flex justify-between items-center flex-wrap gap-4">
-          {prevPost ? (
-            <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-              ← 上一篇：{prevPost.data.title}
-            </a>
-          ) : (
-            <a href="/blog" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-              ← 返回文章列表
-            </a>
-          )}
-          
-          {nextPost && (
-            <a href={`/blog/${nextPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-              下一篇：{nextPost.data.title} →
-            </a>
-          )}
-        </nav>
-      </article>
-    </div>
-  </div>
+    <section class="sec">
+      <div class="markdown-body">
+        <div set:html={htmlContent}></div>
+      </div>
+    </section>
+
+    {relatedPosts.length > 0 && (
+      <section class="sec">
+        <div class="sec-head">
+          <h2>相关文章</h2>
+        </div>
+        <div class="projects">
+          {relatedPosts.map((relatedPost) => (
+            <article class="project">
+              <h4>
+                <a href={`/blog/${relatedPost.slug}`}>{relatedPost.data.title}</a>
+              </h4>
+              <p>{relatedPost.data.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <nav class="sec flex justify-between items-center flex-wrap gap-4">
+      {prevPost ? (
+        <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+          ← 上一篇：{prevPost.data.title}
+        </a>
+      ) : (
+        <a href="/blog" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+          ← 返回文章列表
+        </a>
+      )}
+      
+      {nextPost && (
+        <a href={`/blog/${nextPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
+          下一篇：{nextPost.data.title} →
+        </a>
+      )}
+    </nav>
+  </article>
 
   <style>
-    .article-wrapper {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-
-    @media (min-width: 1024px) {
-      .article-wrapper {
-        grid-template-columns: 240px 1fr;
-      }
-    }
-
     .article-toc {
-      position: sticky;
-      top: 100px;
-      height: fit-content;
-      padding: 1.5rem;
-      background: var(--panel);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 280px;
+      padding: 100px 1.5rem 2rem 1.5rem;
+      overflow-y: auto;
+      background: var(--bg);
+      z-index: 100;
     }
 
     .toc-title {
       font-family: var(--mono);
       font-size: 12px;
       color: var(--muted);
-      margin: 0 0 1rem 0;
+      margin: 0 0 1.5rem 0;
       letter-spacing: 0.04em;
       text-transform: lowercase;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      padding-bottom: 1rem;
     }
 
     .toc-title::before {
@@ -242,17 +229,20 @@ const htmlContent = markdownHtml.value?.toString() || '';
       font-weight: 500;
     }
 
-    .article-main {
-      min-width: 0;
-    }
-
     .article-content {
-      max-width: 100%;
+      max-width: 760px;
+      margin-left: 280px;
+      margin-right: auto;
+      padding: 0 1rem;
     }
 
     @media (max-width: 1023px) {
       .article-toc {
         display: none;
+      }
+      
+      .article-content {
+        margin-left: 0;
       }
     }
   </style>
