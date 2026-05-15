@@ -728,6 +728,14 @@ footer.site .links {
   gap: 12px;
 }
 
+footer.site .links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
 /* Fade in animations */
 @keyframes rise {
   from {
