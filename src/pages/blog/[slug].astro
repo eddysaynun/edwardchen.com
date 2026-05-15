@@ -405,28 +405,28 @@ const htmlContent = markdownHtml.value?.toString() || '';
     }
   </style>
 
-  <script>
+  <script is:inline>
     function toggleTags() {
       const tagsList = document.getElementById('tags-list');
-      const hiddenTags = tagsList.querySelectorAll('.hidden-tag');
+      const hiddenTags = tagsList ? tagsList.querySelectorAll('.hidden-tag') : [];
       const showText = document.querySelector('.show-text');
       const hideText = document.querySelector('.hide-text');
       
       if (hiddenTags.length > 0) {
         // 展开
         hiddenTags.forEach(tag => tag.classList.remove('hidden-tag'));
-        showText.style.display = 'none';
-        hideText.style.display = '';
+        if (showText) showText.style.display = 'none';
+        if (hideText) hideText.style.display = '';
       } else {
         // 收起
-        const allTags = tagsList.querySelectorAll('a');
+        const allTags = tagsList ? tagsList.querySelectorAll('a') : [];
         allTags.forEach((tag, index) => {
           if (index >= 10) {
             tag.classList.add('hidden-tag');
           }
         });
-        showText.style.display = '';
-        hideText.style.display = 'none';
+        if (showText) showText.style.display = '';
+        if (hideText) hideText.style.display = 'none';
       }
     }
   </script>

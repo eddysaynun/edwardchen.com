@@ -197,7 +197,7 @@ const allTags = Object.entries(tagCounts)
     }
   </style>
 
-  <script>
+  <script is:inline>
     function toggleTags() {
       const tagsContainer = document.querySelector('.tags');
       const hiddenTags = tagsContainer ? tagsContainer.querySelectorAll('.hidden-tag') : [];
