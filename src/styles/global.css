@@ -491,6 +491,26 @@ ol.posts {
   font-size: 10px;
 }
 
+/* Tech stack pills */
+.prose .pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-family: var(--mono);
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.prose .pill:hover {
+  border-color: var(--ink-2);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
 .post .meta-r {
   font-family: var(--mono);
   font-size: 11px;
