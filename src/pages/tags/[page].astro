@@ -3,10 +3,10 @@ import Layout from '../../layouts/Layout.astro';
 import TagCloud from '../../components/TagCloud.astro';
 import { getCollection } from 'astro:content';
 
-// 分页配置
-const itemsPerPage = 10;
-
 export async function getStaticPaths() {
+  // 分页配置
+  const itemsPerPage = 12;
+  
   // 获取所有博客文章
   const allPosts = await getCollection('blog');
   
@@ -33,6 +33,9 @@ export async function getStaticPaths() {
   }
   return paths;
 }
+
+// 分页配置
+const itemsPerPage = 12;
 
 // 获取所有博客文章
 const allPosts = await getCollection('blog');
