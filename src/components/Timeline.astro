@@ -70,11 +70,7 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
     color: var(--muted);
     overflow-y: auto;
     max-height: calc(100vh - 144px);
-  }
-
-  /* 给主内容添加右边距，避免被 Timeline 遮挡 */
-  #posts-list {
-    margin-right: 248px;
+    z-index: 10;
   }
 
   .tl-head {
@@ -226,10 +222,6 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
   @media (max-width: 900px) {
     .timeline-side {
       display: none;
-    }
-
-    #posts-list {
-      margin-right: 0;
     }
   }
 </style>
