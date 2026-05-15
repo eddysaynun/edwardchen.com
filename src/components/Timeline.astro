@@ -60,15 +60,17 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
 <style>
   .timeline-side {
     position: fixed;
-    right: 0;
+    left: 50%;
     top: 72px;
     width: 220px;
-    padding: 8px 28px 8px 0;
+    transform: translateX(50%);
+    padding: 8px 0;
     font-family: var(--mono);
     font-size: 11.5px;
     color: var(--muted);
     overflow-y: auto;
     max-height: calc(100vh - 72px);
+    text-align: center;
   }
 
   /* 给主内容添加右边距，避免被 Timeline 遮挡 */
