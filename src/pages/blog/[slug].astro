@@ -146,9 +146,8 @@ const htmlContent = markdownHtml.value?.toString() || '';
         <div id="tags-list" class="row gap-2 flex-wrap">
           {post.data.tags.map((tag, index) => (
             <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
-               class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
-               aria-label={`查看 ${tag} 标签的文章`}
-               style={index >= 10 ? 'display: none;' : ''}>
+               class={`pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1${index >= 10 ? ' hidden-tag' : ''}`}
+               aria-label={`查看 ${tag} 标签的文章`}>
               #{tag}
             </a>
           ))}
@@ -398,18 +397,22 @@ const htmlContent = markdownHtml.value?.toString() || '';
     .toggle-tags-btn:hover {
       color: var(--ink);
     }
+
+    .hidden-tag {
+      display: none;
+    }
   </style>
 
   <script>
     function toggleTags() {
       const tagsList = document.getElementById('tags-list');
-      const hiddenTags = tagsList.querySelectorAll('[style*="display: none"]');
+      const hiddenTags = tagsList.querySelectorAll('.hidden-tag');
       const showText = document.querySelector('.show-text');
       const hideText = document.querySelector('.hide-text');
       
       if (hiddenTags.length > 0) {
         // 展开
-        hiddenTags.forEach(tag => tag.style.display = '');
+        hiddenTags.forEach(tag => tag.classList.remove('hidden-tag'));
         showText.style.display = 'none';
         hideText.style.display = '';
       } else {
@@ -417,7 +420,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
         const allTags = tagsList.querySelectorAll('a');
         allTags.forEach((tag, index) => {
           if (index >= 10) {
-            tag.style.display = 'none';
+            tag.classList.add('hidden-tag');
           }
         });
         showText.style.display = '';
