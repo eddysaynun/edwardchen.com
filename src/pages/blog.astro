@@ -38,8 +38,14 @@ const allTags = Object.entries(tagCounts)
     <p class="lede">{t('blog.lede', lang)}</p>
   </section>
 
-  <!-- Controls: Search + Tags -->
-  <section class="sec rise d1">
+  <!-- Posts List with Search and Tags -->
+  <section class="sec rise d2">
+    <div class="sec-head">
+      <h2>文章列表</h2>
+      <span class="aux">{posts.length} 篇文章</span>
+    </div>
+    
+    <!-- Controls: Search + Tags -->
     <div class="controls">
       <Search placeholder={t('blog.searchPlaceholder', lang)} />
     </div>
@@ -64,14 +70,6 @@ const allTags = Object.entries(tagCounts)
           <span class="hide-text" style="display: none;">收起</span>
         </button>
       )}
-    </div>
-  </section>
-
-  <!-- Posts List -->
-  <section class="sec rise d2">
-    <div class="sec-head">
-      <h2>文章列表</h2>
-      <span class="aux">{posts.length} 篇文章</span>
     </div>
     
     <ol class="posts" id="posts-list">
@@ -172,14 +170,15 @@ const allTags = Object.entries(tagCounts)
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
 
     /* Tags toggle */
     .tags-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 6px;
+      margin-bottom: 18px;
     }
 
     .hidden-tag {
