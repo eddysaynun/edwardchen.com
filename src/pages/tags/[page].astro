@@ -3,27 +3,36 @@ import Layout from '../../layouts/Layout.astro';
 import TagCloud from '../../components/TagCloud.astro';
 import { getCollection } from 'astro:content';
 
-// 获取所有博客文章
-const allPosts = await getCollection('blog');
-
-// 统计标签
-const tagCounts: Record<string, number> = {};
-allPosts.forEach(post => {
-  post.data.tags.forEach(tag => {
-    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-  });
-});
-
-// 转换为数组并按计数排序
-const tags = Object.entries(tagCounts)
-  .map(([name, count]) => ({ name, count }))
-  .sort((a, b) => b.count - a.count);
-
 // 分页配置
 const itemsPerPage = 10;
+
+// 获取所有博客文章并统计标签
+async function getTagsData() {
+  const allPosts = await getCollection('blog');
+  
+  // 统计标签
+  const tagCounts: Record<string, number> = {};
+  allPosts.forEach(post => {
+    post.data.tags.forEach(tag => {
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+    });
+  });
+  
+  // 转换为数组并按计数排序
+  const tags = Object.entries(tagCounts)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+  
+  return tags;
+}
+
+// 获取标签数据
+const tags = await getTagsData();
+const totalPages = Math.ceil(tags.length / itemsPerPage);
+
+// 获取当前页
 const { page } = Astro.params;
 const currentPage = page ? Number(page) : 1;
-const totalPages = Math.ceil(tags.length / itemsPerPage);
 
 // 如果页面号超出范围，重定向到首页
 if (currentPage < 1 || currentPage > totalPages) {
@@ -37,7 +46,10 @@ const hasPrev = currentPage > 1;
 const hasNext = currentPage < totalPages;
 
 export async function getStaticPaths() {
+  const tags = await getTagsData();
+  const totalPages = Math.ceil(tags.length / itemsPerPage);
   const paths = [];
+  
   for (let i = 1; i <= totalPages; i++) {
     paths.push({
       params: { page: i.toString() }
