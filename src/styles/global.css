@@ -736,6 +736,31 @@ footer.site .links a {
   transition: color 0.2s;
 }
 
+/* About page links */
+.prose .links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.prose .links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-size: 0.875rem;
+}
+
+.prose .links a:hover {
+  color: var(--ink);
+}
+
+.prose .links svg {
+  flex-shrink: 0;
+}
+
 /* Fade in animations */
 @keyframes rise {
   from {
