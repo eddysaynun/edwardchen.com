@@ -142,14 +142,24 @@ const htmlContent = markdownHtml.value?.toString() || '';
       <h1>{post.data.title}</h1>
       <p class="lede mb-6">{post.data.description}</p>
       
-      <div class="row gap-2 flex-wrap">
-        {post.data.tags.map((tag) => (
-          <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
-             class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
-             aria-label={`查看 ${tag} 标签的文章`}>
-            #{tag}
-          </a>
-        ))}
+      <div class="tags-container">
+        <div id="tags-list" class="row gap-2 flex-wrap">
+          {post.data.tags.map((tag, index) => (
+            <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
+               class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-3 py-1"
+               aria-label={`查看 ${tag} 标签的文章`}
+               style={index >= 10 ? 'display: none;' : ''}>
+              #{tag}
+            </a>
+          ))}
+        </div>
+        {post.data.tags.length > 10 && (
+          <button id="toggle-tags" class="toggle-tags-btn text-xs text-stone-600 hover:text-stone-900 mt-2" 
+                  onclick="toggleTags()">
+            <span class="show-text">展开 {post.data.tags.length - 10} 个标签</span>
+            <span class="hide-text" style="display: none;">收起</span>
+          </button>
+        )}
       </div>
     </header>
 
@@ -369,5 +379,50 @@ const htmlContent = markdownHtml.value?.toString() || '';
     .markdown-body li {
       margin-bottom: 0.5rem;
     }
+
+    /* Tags toggle */
+    .tags-container {
+      margin-bottom: 1rem;
+    }
+
+    .toggle-tags-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem 0;
+      font-size: 0.75rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+
+    .toggle-tags-btn:hover {
+      color: var(--ink);
+    }
   </style>
+
+  <script>
+    function toggleTags() {
+      const tagsList = document.getElementById('tags-list');
+      const hiddenTags = tagsList.querySelectorAll('[style*="display: none"]');
+      const showText = document.querySelector('.show-text');
+      const hideText = document.querySelector('.hide-text');
+      
+      if (hiddenTags.length > 0) {
+        // 展开
+        hiddenTags.forEach(tag => tag.style.display = '');
+        showText.style.display = 'none';
+        hideText.style.display = '';
+      } else {
+        // 收起
+        const allTags = tagsList.querySelectorAll('a');
+        allTags.forEach((tag, index) => {
+          if (index >= 10) {
+            tag.style.display = 'none';
+          }
+        });
+        showText.style.display = '';
+        hideText.style.display = 'none';
+      }
+    }
+  </script>
 </Layout>
