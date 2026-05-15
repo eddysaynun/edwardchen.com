@@ -68,29 +68,31 @@ const allTags = Object.entries(tagCounts)
     </div>
   </section>
 
-  <!-- Posts List -->
-  <section class="sec rise d2">
-    <div class="posts-container">
+  <!-- Posts List + Timeline -->
+  <div class="writing-grid">
+    <section class="sec rise d2">
+      <div class="sec-head">
+        <h2>文章列表</h2>
+        <span class="aux">{posts.length} 篇文章</span>
+      </div>
+      
       <ol class="posts" id="posts-list">
         {posts.map((post) => (
-          <li class={`post ${post.data.pinned ? 'pinned' : ''}`} data-tags={post.data.tags.join(',')}>
+          <li class={`post ${post.data.pinned ? 'pinned' : ''}`} data-tags={post.data.tags.join(',')}>\
             <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
               {post.data.pubDate?.toLocaleDateString(lang) || t('common.unpublished', lang)}
-              {post.data.pinned && (
-                <span class="pinned-badge" title={t('blog.pinned', lang)}>📌</span>
-              )}
             </time>
             <div class="body">
               <h3>
                 <a href={`/blog/${post.slug}`}>{post.data.title}</a>
               </h3>
               <p>{post.data.description}</p>
-              <div class="row gap-2 flex-wrap">
+              <div class="row">
                 {post.data.tags.map((tag) => (
-                  <a href={`/blog/${post.slug}&tag=${encodeURIComponent(tag)}`} 
-                     class="pill text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 hover:text-stone-900 transition-colors px-2.5 py-0.5"
+                  <a href={`/blog?tag=${encodeURIComponent(tag)}`} 
+                     class="pill"
                      aria-label={`查看 ${tag} 标签的文章`}>
-                    #{tag}
+                    {tag}
                   </a>
                 ))}
               </div>
@@ -101,12 +103,11 @@ const allTags = Object.entries(tagCounts)
           </li>
         ))}
       </ol>
+    </section>
 
-    </div>
-  </section>
-
-  <!-- Timeline Sidebar -->
-  <Timeline posts={posts} />
+    <!-- Timeline Sidebar -->
+    <Timeline posts={posts} />
+  </div>
 
   <script is:inline>
     (function() {
@@ -169,6 +170,31 @@ const allTags = Object.entries(tagCounts)
   </script>
 
   <style>
+    /* Writing grid layout */
+    .writing-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 56px;
+      align-items: start;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 36px 28px 28px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 900px) {
+      .writing-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+        max-width: var(--col);
+        padding: 0;
+      }
+
+      .timeline-side {
+        display: none;
+      }
+    }
+
     /* Tags toggle */
     .tags-wrapper {
       display: flex;
