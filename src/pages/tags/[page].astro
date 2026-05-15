@@ -26,6 +26,19 @@ async function getTagsData() {
   return tags;
 }
 
+export async function getStaticPaths() {
+  const tags = await getTagsData();
+  const totalPages = Math.ceil(tags.length / itemsPerPage);
+  const paths = [];
+  
+  for (let i = 1; i <= totalPages; i++) {
+    paths.push({
+      params: { page: i.toString() }
+    });
+  }
+  return paths;
+}
+
 // 获取标签数据
 const tags = await getTagsData();
 const totalPages = Math.ceil(tags.length / itemsPerPage);
@@ -44,19 +57,6 @@ const endIndex = startIndex + itemsPerPage;
 const currentTags = tags.slice(startIndex, endIndex);
 const hasPrev = currentPage > 1;
 const hasNext = currentPage < totalPages;
-
-export async function getStaticPaths() {
-  const tags = await getTagsData();
-  const totalPages = Math.ceil(tags.length / itemsPerPage);
-  const paths = [];
-  
-  for (let i = 1; i <= totalPages; i++) {
-    paths.push({
-      params: { page: i.toString() }
-    });
-  }
-  return paths;
-}
 ---
 
 <Layout title="标签云 - Edward Chen">
