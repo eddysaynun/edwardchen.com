@@ -738,19 +738,20 @@ footer.site .links a {
 
 /* About page links */
 .prose .links {
-  display: flex;
+  display: flex !important;
   gap: 16px;
   flex-wrap: wrap;
 }
 
 .prose .links a {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   gap: 6px;
   color: var(--muted);
   text-decoration: none;
   transition: color 0.2s;
   font-size: 0.875rem;
+  white-space: nowrap;
 }
 
 .prose .links a:hover {
@@ -759,6 +760,10 @@ footer.site .links a {
 
 .prose .links svg {
   flex-shrink: 0;
+}
+
+.prose .links a span {
+  display: inline;
 }
 
 /* Fade in animations */
