@@ -5,6 +5,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
+import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 import { toString } from 'mdast-util-to-string';
 import Giscus from '../../components/Giscus.astro';
@@ -77,12 +78,7 @@ const tocHeadings = [];
 function extractHeadings(node) {
   if (node.type === 'heading' && node.depth === 2) {
     const text = toString(node);
-    const id = text
-      .toLowerCase()
-      .replace(/[\w\s\u4e00-\u9fa5]/g, '-')
-      .replace(/\s+/g, '-')
-      .trim();
-    tocHeadings.push({ id, text });
+    tocHeadings.push({ text });
   }
   
   if (node.children) {
@@ -97,6 +93,7 @@ const markdownHtml = await unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkRehype)
+  .use(rehypeSlug)
   .use(rehypeStringify)
   .process(post.body);
 
@@ -112,10 +109,10 @@ const htmlContent = markdownHtml.value?.toString() || '';
       </div>
       
       <div class="toc-rail">
-        <ul class="toc-list">
+        <ul class="toc-list" id="toc-list">
           {tocHeadings.map((heading) => (
             <li>
-              <a href={`#${heading.id}`} class="toc-link">
+              <a href="#" class="toc-link" data-text={heading.text}>
                 <span class="toc-t">{heading.text}</span>
               </a>
             </li>
@@ -232,11 +229,11 @@ const htmlContent = markdownHtml.value?.toString() || '';
       letter-spacing: 0.04em;
       margin-bottom: 16px;
       white-space: nowrap;
-      padding-left: 18px;
+      padding-left: 0;
     }
 
     .toc-head::before {
-      content: "// toc";
+      content: "// 目录";
       color: var(--muted);
       margin-right: 8px;
     }
@@ -495,5 +492,54 @@ const htmlContent = markdownHtml.value?.toString() || '';
         if (hideText) hideText.style.display = 'none';
       }
     }
+
+    // TOC 点击跳转和高亮
+    (function() {
+      const tocLinks = document.querySelectorAll('.toc-link');
+      
+      // 等待内容渲染完成
+      setTimeout(() => {
+        const headings = document.querySelectorAll('.markdown-body h2[id]');
+        
+        // 更新 TOC 链接的 href
+        tocLinks.forEach((link, index) => {
+          const text = link.getAttribute('data-text');
+          const heading = Array.from(headings).find(h => h.textContent.trim() === text);
+          if (heading) {
+            link.setAttribute('href', `#${heading.id}`);
+          }
+        });
+
+        // 点击跳转
+        tocLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          });
+        });
+
+        // 滚动时高亮当前章节
+        window.addEventListener('scroll', () => {
+          let current = '';
+          headings.forEach(heading => {
+            const rect = heading.getBoundingClientRect();
+            if (rect.top <= 100 && rect.bottom >= 100) {
+              current = heading.id;
+            }
+          });
+
+          tocLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+              link.classList.add('active');
+            }
+          });
+        });
+      }, 100);
+    })();
   </script>
 </Layout>
