@@ -1,9 +1,11 @@
 ---
-title: "从零搭建 Kubernetes 集群 (ARM64 Linux 离线版)"
-description: "在 ARM64 架构的离线 Linux 服务器上从零搭建生产级 Kubernetes 集群，使用本地源完成 kubeadm 高可用部署。"
+title: 从零搭建 Kubernetes 集群 (ARM64 Linux 离线版)
+description: 在 ARM64 架构的离线 Linux 服务器上从零搭建生产级 Kubernetes 集群，使用本地源完成 kubeadm 高可用部署。
 pubDate: 2026-05-14
 updatedDate: 2026-05-14
-tags: ["Kubernetes", "K8s", "ARM64", "离线部署", "容器编排", "DevOps"]
+tags:
+  - Kubernetes
+  - DevOps
 pinned: false
 ---
 

@@ -1,9 +1,11 @@
 ---
-title: "从零搭建 Astro 个人博客"
-description: "使用 Astro + TailwindCSS 构建现代化静态博客，实现内容集合、置顶排序、时间线导航等最佳实践。"
-pubDate: 2025-05-10
+title: 从零搭建 Astro 个人博客
+description: 使用 Astro + TailwindCSS 构建现代化静态博客，实现内容集合、置顶排序、时间线导航等最佳实践。
+pubDate: 2026-05-10
 updatedDate: 2026-05-14
-tags: ["Astro", "博客", "静态站点", "TailwindCSS", "最佳实践"]
+tags:
+  - Astro
+  - TailwindCSS
 pinned: true
 ---
 

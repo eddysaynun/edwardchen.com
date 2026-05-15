@@ -114,12 +114,12 @@ conversation.predict(input="我做什么工作的？")
 
 **记忆类型对比：**
 
-| 类型 | 说明 | 适用场景 |
-|------|------|----------|
-| ConversationBufferMemory | 存储所有历史消息 | 简单对话 |
+| 类型                             | 说明        | 适用场景        |
+| ------------------------------ | --------- | ----------- |
+| ConversationBufferMemory       | 存储所有历史消息  | 简单对话        |
 | ConversationBufferWindowMemory | 只保留最近 N 条 | 长对话节省 token |
-| ConversationSummaryMemory | 摘要历史对话 | 超长对话 |
-| EntityMemory | 提取实体信息 | 需要记住事实的对话 |
+| ConversationSummaryMemory      | 摘要历史对话    | 超长对话        |
+| EntityMemory                   | 提取实体信息    | 需要记住事实的对话   |
 
 ### 4. 工具 (Tools)
 
