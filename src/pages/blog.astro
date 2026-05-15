@@ -38,13 +38,14 @@ const allTags = Object.entries(tagCounts)
     <p class="lede">{t('blog.lede', lang)}</p>
   </section>
 
-  <!-- Search -->
+  <!-- Controls: Search + Tags -->
   <section class="sec rise d1">
-    <Search placeholder={t('blog.searchPlaceholder', lang)} />
-  </section>
-
-  <!-- Tags Filter -->
-  <section class="sec rise d1">
+    <div class="controls">
+      <div class="search-wrap">
+        <Search placeholder={t('blog.searchPlaceholder', lang)} />
+      </div>
+    </div>
+    
     <div class="tags-wrapper">
       <div class="tags">
         <button class="tag active" data-tag="all">
@@ -168,6 +169,19 @@ const allTags = Object.entries(tagCounts)
   </script>
 
   <style>
+    /* Controls row */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+
     /* Tags toggle */
     .tags-wrapper {
       display: flex;
