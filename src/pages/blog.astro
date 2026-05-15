@@ -41,9 +41,7 @@ const allTags = Object.entries(tagCounts)
   <!-- Controls: Search + Tags -->
   <section class="sec rise d1">
     <div class="controls">
-      <div class="search-wrap">
-        <Search placeholder={t('blog.searchPlaceholder', lang)} />
-      </div>
+      <Search placeholder={t('blog.searchPlaceholder', lang)} />
     </div>
     
     <div class="tags-wrapper">
@@ -175,11 +173,6 @@ const allTags = Object.entries(tagCounts)
       align-items: center;
       gap: 10px;
       margin-bottom: 14px;
-    }
-
-    .search-wrap {
-      flex: 1;
-      min-width: 0;
     }
 
     /* Tags toggle */
