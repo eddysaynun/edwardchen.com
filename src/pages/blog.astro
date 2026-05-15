@@ -45,25 +45,27 @@ const allTags = Object.entries(tagCounts)
 
   <!-- Tags Filter -->
   <section class="sec rise d1">
-    <div class="tags">
-      <button class="tag active" data-tag="all">
-        {t('blog.all', lang)}
-        <span class="ct">({posts.length})</span>
-      </button>
-      {allTags.map((tag, index) => (
-        <button class={`tag${index >= 10 ? ' hidden-tag' : ''}`} data-tag={tag}>
-          {tag}
-          <span class="ct">({tagCounts[tag]})</span>
+    <div class="tags-wrapper">
+      <div class="tags">
+        <button class="tag active" data-tag="all">
+          {t('blog.all', lang)}
+          <span class="ct">({posts.length})</span>
         </button>
-      ))}
+        {allTags.map((tag, index) => (
+          <button class={`tag${index >= 10 ? ' hidden-tag' : ''}`} data-tag={tag}>
+            {tag}
+            <span class="ct">({tagCounts[tag]})</span>
+          </button>
+        ))}
+      </div>
+      {allTags.length > 10 && (
+        <button id="toggle-tags" class="toggle-tags-btn" 
+                onclick="toggleTags()">
+          <span class="show-text">展开 {allTags.length - 10} 个标签</span>
+          <span class="hide-text" style="display: none;">收起</span>
+        </button>
+      )}
     </div>
-    {allTags.length > 10 && (
-      <button id="toggle-tags" class="toggle-tags-btn text-xs text-stone-600 hover:text-stone-900 mt-2" 
-              onclick="toggleTags()">
-        <span class="show-text">展开 {allTags.length - 10} 个标签</span>
-        <span class="hide-text" style="display: none;">收起</span>
-      </button>
-    )}
   </section>
 
   <!-- Posts List -->
@@ -168,6 +170,12 @@ const allTags = Object.entries(tagCounts)
 
   <style>
     /* Tags toggle */
+    .tags-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
     .hidden-tag {
       display: none;
     }
@@ -176,11 +184,12 @@ const allTags = Object.entries(tagCounts)
       background: none;
       border: none;
       cursor: pointer;
-      padding: 0.25rem 0;
+      padding: 0.25rem 0.5rem;
       font-size: 0.75rem;
       color: var(--muted, #666);
       transition: color 0.2s;
-      margin-top: 0.5rem;
+      text-align: left;
+      margin-left: 0.5rem;
     }
 
     .toggle-tags-btn:hover {
@@ -191,25 +200,25 @@ const allTags = Object.entries(tagCounts)
   <script>
     function toggleTags() {
       const tagsContainer = document.querySelector('.tags');
-      const hiddenTags = tagsContainer.querySelectorAll('.hidden-tag');
+      const hiddenTags = tagsContainer ? tagsContainer.querySelectorAll('.hidden-tag') : [];
       const showText = document.querySelector('.show-text');
       const hideText = document.querySelector('.hide-text');
       
       if (hiddenTags.length > 0) {
         // 展开
         hiddenTags.forEach(tag => tag.classList.remove('hidden-tag'));
-        showText.style.display = 'none';
-        hideText.style.display = '';
+        if (showText) showText.style.display = 'none';
+        if (hideText) hideText.style.display = '';
       } else {
         // 收起
-        const allTagButtons = tagsContainer.querySelectorAll('.tag');
+        const allTagButtons = tagsContainer ? tagsContainer.querySelectorAll('.tag') : [];
         allTagButtons.forEach((tag, index) => {
           if (index >= 10) {
             tag.classList.add('hidden-tag');
           }
         });
-        showText.style.display = '';
-        hideText.style.display = 'none';
+        if (showText) showText.style.display = '';
+        if (hideText) hideText.style.display = 'none';
       }
     }
   </script>
