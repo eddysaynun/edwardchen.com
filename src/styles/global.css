@@ -409,7 +409,7 @@ ol.posts {
 .post {
   display: grid;
   grid-template-columns: 84px 1fr auto;
-  gap: 22px;
+  gap: 14px;
   align-items: baseline;
   padding: var(--row-pad) 0;
   border-bottom: 1px solid var(--line);
