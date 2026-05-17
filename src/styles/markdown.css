@@ -143,20 +143,23 @@
 /* 复制按钮样式 */
 .markdown-body pre .copy-code-btn {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  padding: 0.4rem 0.75rem;
-  background: rgba(128, 128, 128, 0.1);
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(128, 128, 128, 0.08);
   border: 1px solid var(--line);
   border-radius: 6px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
   visibility: hidden;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .markdown-body pre:hover .copy-code-btn {
@@ -165,7 +168,7 @@
 }
 
 .markdown-body pre .copy-code-btn:hover {
-  background: rgba(128, 128, 128, 0.15);
+  background: rgba(128, 128, 128, 0.12);
   border-color: var(--ink-2);
   color: var(--ink);
   transform: translateY(-1px);
@@ -179,6 +182,13 @@
   background: var(--success);
   border-color: var(--success);
   color: white;
+  opacity: 1;
+  visibility: visible;
+}
+
+.markdown-body pre .copy-code-btn svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* Toast 提示 */
