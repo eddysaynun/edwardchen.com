@@ -119,8 +119,98 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
       </div>
     </div>
 
+    <!-- 代码复制 Toast 提示 -->
+    <div id="code-copy-toast" class="code-copy-toast">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span>代码已复制！</span>
+    </div>
+
     <script>
       (function() {
+        // ===== 代码复制功能 =====
+        function initCodeCopy() {
+          const pres = document.querySelectorAll('.markdown-body pre');
+          
+          pres.forEach(pre => {
+            // 检查是否已经添加了复制按钮
+            if (pre.querySelector('.copy-code-btn')) return;
+            
+            const code = pre.querySelector('code');
+            if (!code) return;
+            
+            // 创建复制按钮
+            const btn = document.createElement('button');
+            btn.className = 'copy-code-btn';
+            btn.innerHTML = '复制';
+            btn.type = 'button';
+            btn.setAttribute('aria-label', '复制代码');
+            
+            // 点击复制
+            btn.addEventListener('click', async () => {
+              const codeText = code.textContent;
+              
+              try {
+                await navigator.clipboard.writeText(codeText);
+                
+                // 按钮显示已复制状态
+                btn.classList.add('copied');
+                btn.innerHTML = '✓ 已复制';
+                
+                // 显示 Toast 提示
+                showToast();
+                
+                // 2 秒后恢复
+                setTimeout(() => {
+                  btn.classList.remove('copied');
+                  btn.innerHTML = '复制';
+                }, 2000);
+                
+              } catch (err) {
+                console.error('复制失败:', err);
+                btn.innerHTML = '✗ 失败';
+                setTimeout(() => {
+                  btn.innerHTML = '复制';
+                }, 2000);
+              }
+            });
+            
+            pre.appendChild(btn);
+          });
+        }
+        
+        // 显示 Toast 提示
+        function showToast() {
+          const toast = document.getElementById('code-copy-toast');
+          if (toast) {
+            toast.classList.add('show');
+            setTimeout(() => {
+              toast.classList.remove('show');
+            }, 2000);
+          }
+        }
+        
+        // 初始化代码复制
+        if (document.querySelector('.markdown-body')) {
+          initCodeCopy();
+        }
+        
+        // 监听动态内容加载（如 SPA 路由切换）
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length) {
+              initCodeCopy();
+            }
+          });
+        });
+        
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+        
+        // ===== 原有的 Tweaks Panel 逻辑 =====
         const toggle = document.querySelector('.tweaks-toggle');
         const menu = document.querySelector('.tweaks-menu');
         const options = document.querySelectorAll('.tweak-option');

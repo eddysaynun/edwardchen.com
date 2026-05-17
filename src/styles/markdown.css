@@ -129,6 +129,7 @@
   overflow-x: auto;
   margin: 1.25rem 0;
   border: 1px solid var(--line);
+  position: relative;
 }
 
 .markdown-body pre code {
@@ -137,6 +138,80 @@
   color: var(--ink);
   font-size: 14px;
   line-height: 1.6;
+}
+
+/* 复制按钮样式 */
+.markdown-body pre .copy-code-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(128, 128, 128, 0.1);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 10;
+}
+
+.markdown-body pre:hover .copy-code-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.markdown-body pre .copy-code-btn:hover {
+  background: rgba(128, 128, 128, 0.15);
+  border-color: var(--ink-2);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.markdown-body pre .copy-code-btn:active {
+  transform: translateY(0);
+}
+
+.markdown-body pre .copy-code-btn.copied {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+/* Toast 提示 */
+.code-copy-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.code-copy-toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.code-copy-toast svg {
+  width: 16px;
+  height: 16px;
 }
 
 .markdown-body pre code::-webkit-scrollbar {
