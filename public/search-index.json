@@ -4,34 +4,30 @@
     "title": "从零搭建 Astro 个人博客",
     "description": "使用 Astro + TailwindCSS 构建现代化静态博客，实现内容集合、置顶排序、时间线导航等最佳实践。",
     "slug": "/blog/astro-blog-setup/",
-    "published": "2025-05-10T00:00:00.000Z",
-    "tags": [
-      "Astro",
-      "博客",
-      "静态站点",
-      "TailwindCSS",
-      "最佳实践"
-    ],
+    "published": "2026-05-10T00:00:00.000Z",
+    "tags": [],
     "content": "\n# 从零搭建 Astro 个人博客\n\n本文记录使用 Astro 构建个人博客的完整流程，涵盖项目初始化、内容管理、交互优化、组件抽象等核心环节，并总结实际开发中的最佳实践。\n\n---\n\n## 一、技术选型\n\n### 为什么选择 Astro？\n\nAstro 是专为内容驱动型网站设计的现代 Web 框架，核心优势包括：\n\n1. **零 JavaScript 输出** — 默认不发送 JS，按需 hydration，性能极致\n2. **静态生成优先** — 预渲染 HTML，SEO 友好\n3. **多框架兼容** — 可混用 React、Vue、Svelte 组件\n4. **Markdown 原生支持** — Content Collections 提供类型安全的内容管理\n\n### 技术栈\n\n| 模块 | 技术选型 | 理由 |\n|------|----------|------|\n| 框架 | Astro 4.x | 静态生成，零 JS 输出 |\n| 样式 | TailwindCSS | 原子化 CSS，开发效率高 |\n| 内容 | Markdown + Content Collections | 类型安全，写作体验佳 |\n| 部署 | Cloudflare Pages | 全球 CDN，自动 HTTPS，免费 |\n| 版本控制 | GitHub | 免费托管，CI/CD 集成 |\n\n---\n\n## 二、项目初始化\n\n### 创建项目\n\n```bash\nnpm create astro@latest my-blog\n# 或\nnpx create-astro@latest my-blog\n```\n\n推荐选项：\n- 使用空模板（Empty）\n- 启用 TypeScript\n- 添加 TailwindCSS 集成\n\n### 安装 TailwindCSS\n\n```bash\nnpm install -D @astrojs/tailwind tailwindcss\n```\n\n`astro.config.mjs`:\n\n```js\nimport { defineConfig } from 'astro/config';\nimport tailwind from '@astrojs/tailwind';\n\nexport default defineConfig({\n  integrations: [tailwind()],\n});\n```\n\n---\n\n## 三、内容集合（Content Collections）\n\n### 1. 定义 Schema\n\n`src/content/config.ts`:\n\n```ts\nimport { defineCollection, z } from 'astro:content';\n\nconst blogCollection = defineCollection({\n  type: 'content',\n  schema: z.object({\n    title: z.string(),\n    description: z.string(),\n    pubDate: z.date(),\n    tags: z.array(z.string()).default([]),\n    pinned: z.boolean().default(false),\n  }),\n});\n\nexport const collections = {\n  'blog': blogCollection,\n};\n```\n\n**Schema 设计要点：**\n- `title` 和 `description` 为必填字段\n- `pubDate` 使用 `z.date()` 自动解析 ISO 字符串\n- `tags` 默认为空数组，避免未定义错误\n- `pinned` 控制文章置顶，默认 `false`\n\n### 2. 创建文章\n\n`src/content/blog/your-post.md`:\n\n```md\n---\ntitle: \"文章标题\"\ndescription: \"文章摘要，用于列表页展示\"\npubDate: 2026-05-14\ntags: [\"技术\", \"笔记\"]\npinned: true\n---\n\n# 正文\n\n这里是文章内容...\n```\n\n**Frontmatter 规范：**\n- 日期格式：`YYYY-MM-DD`（ISO 8601）\n- 标签数组：使用双引号，避免解析错误\n- 置顶标识：`pinned: true` 即可\n\n---\n\n## 四、核心功能实现\n\n### 4.1 Tag 展示与筛选\n\n#### 问题描述\n\n初始实现中，tag 标签挤在一起显示（如 \"AI 自动化生产力\"），缺乏间距和交互反馈。\n\n#### 设"
   },
   {
     "id": 1,
+    "title": "Ansible 自动化运维完整指南",
+    "description": "从零掌握 Ansible 自动化运维工具，涵盖基础概念、Playbook 编写、角色管理、最佳实践和高级应用。",
+    "slug": "/blog/ansible-complete-guide/",
+    "published": "2026-05-14T00:00:00.000Z",
+    "tags": [],
+    "content": "\n# Ansible 自动化运维完整指南\n\n本文将全面介绍 Ansible 自动化运维工具，从基础概念到高级应用，帮助你构建高效、可维护的基础设施自动化体系。\n\n## 为什么选择 Ansible？\n\n### 配置管理工具对比\n\n| 工具 | 架构 | Agent | 学习曲线 | 适用场景 |\n|------|------|-------|----------|----------|\n| **Ansible** | Push | 无需 | 低 | 快速部署、简单运维 |\n| Puppet | Pull | 需要 | 高 | 大型复杂环境 |\n| Chef | Pull | 需要 | 高 | 企业级配置管理 |\n| SaltStack | Push/Pull | 可选 | 中 | 高性能需求 |\n\n### Ansible 的核心优势\n\n- **无代理架构** — 通过 SSH 连接，无需安装 Agent\n- **简单易学** — YAML 语法，直观易懂\n- **幂等性** — 多次执行结果一致\n- **丰富模块** — 3000+ 内置模块\n- **社区活跃** — 大量社区角色和插件\n- **双向通信** — 支持 ad-hoc 命令和 Playbook\n\n## 核心概念\n\n### 1. 控制节点 (Control Node)\n\n运行 Ansible 的机器，可以是任何 Linux/Mac 系统。\n\n```bash\n# 安装 Ansible\nsudo apt update\nsudo apt install ansible\n\n# 验证安装\nansible --version\n```\n\n### 2. 管理主机 (Managed Nodes)\n\n被 Ansible 管理的目标服务器。\n\n**要求：**\n- 安装 OpenSSH Server\n- 与控制节点网络可达\n- 支持 SSH 密钥认证（推荐）\n\n### 3. 库存 (Inventory)\n\n定义被管理主机的配置文件。\n\n**静态库存示例：**\n\n```ini\n# /etc/ansible/hosts 或 inventory.ini\n\n[webservers]\nweb1 ansible_host=192.168.1.10 ansible_user=ubuntu\nweb2 ansible_host=192.168.1.11 ansible_user=ubuntu\n\n[dbservers]\ndb1 ansible_host=192.168.1.20 ansible_user=root\ndb2 ansible_host=192.168.1.21 ansible_user=root\n\n[loadbalancers]\nlb1 ansible_host=192.168.1.5 ansible_user=admin\n\n# 组合组\n[web:children]\nwebservers\nloadbalancers\n\n# 变量定义\n[webservers:vars]\nhttp_port=80\nmax_clients=200\n\n# 所有服务器\n[all:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\n```\n\n**动态库存示例（JSON 格式）：**\n\n```json\n{\n  \"webservers\": {\n    \"hosts\": [\"web1.example.com\", \"web2.example.com\"],\n    \"vars\": {\n      \"http_port\": 80\n    }\n  },\n  \"dbservers\": {\n    \"hosts\": [\"db1.example.com\", \"db2.example.com\"],\n    \"vars\": {\n      \"db_port\": 3306\n    }\n  }\n}\n```\n\n### 4. 模块 (Modules)\n\nAnsible 的基本执行单元，完成特定任务。\n\n**常用模块：**\n\n| 模块 | 用途 | 示例 |\n|------|------|------|\n| `command` | 执行命令 | `command: /usr/bin/uptime` |\n| `shell` | Shell 命令 | `shell: ls -la \\| grep log` |\n| `copy` | 复制文件 | `copy: src=/local/file dest=/remote/file` |\n| `template` | 模板渲染 | `template: src=config.j2 dest=/etc/app.conf` |\n| `yum`/`apt` |"
+  },
+  {
+    "id": 2,
     "title": "从零搭建 Kubernetes 集群 (ARM64 Linux 离线版)",
     "description": "在 ARM64 架构的离线 Linux 服务器上从零搭建生产级 Kubernetes 集群，使用本地源完成 kubeadm 高可用部署。",
     "slug": "/blog/k8s-cluster-setup-arm64/",
     "published": "2026-05-14T00:00:00.000Z",
-    "tags": [
-      "Kubernetes",
-      "K8s",
-      "ARM64",
-      "离线部署",
-      "容器编排",
-      "DevOps"
-    ],
+    "tags": [],
     "content": "\n# 从零搭建 Kubernetes 集群 (ARM64 Linux 离线版)\n\n本文将详细介绍如何在**无外网访问**的 ARM64 架构 Linux 服务器上从零搭建 Kubernetes 集群，包括离线资源准备、本地源配置、节点配置、集群初始化和高可用部署等完整流程。\n\n## 为什么选择离线部署？\n\n离线部署在内网环境、安全要求高的场景中非常重要：\n\n- **安全性** — 避免外部网络攻击\n- **合规性** — 满足等保、金融等行业要求\n- **稳定性** — 不受外网波动影响\n- **可控性** — 完全掌控软件版本和来源\n\n## 环境准备\n\n### 硬件要求\n\n**最小配置：**\n- **控制节点 (Control Plane)**：2 核 CPU, 4GB RAM, 50GB 磁盘\n- **工作节点 (Worker Node)**：2 核 CPU, 4GB RAM, 50GB 磁盘\n- **跳板机/资源机**（可选）：4 核 CPU, 8GB RAM, 200GB 磁盘（用于下载离线包）\n\n**推荐配置（生产环境）：**\n- **控制节点**：4 核 CPU, 8GB RAM, 100GB 磁盘\n- **工作节点**：4 核 CPU, 16GB RAM, 200GB 磁盘\n\n### 软件要求\n\n- **操作系统**：Ubuntu 22.04 LTS / Debian 11+ / Rocky Linux 9+ (ARM64)\n- **内核版本**：5.15+\n- **Kubernetes 版本**：v1.28+\n- **容器运行时**：containerd 1.6+\n\n### 网络规划\n\n```\n节点角色        IP 地址           主机名\n─────────────────────────────────────────\nControl Plane   192.168.1.100     k8s-master-01\nWorker Node 1   192.168.1.101     k8s-worker-01\nWorker Node 2   192.168.1.102     k8s-worker-02\n跳板机/资源机   192.168.1.200     k8s-jump-host  (可上网)\n```\n\n## 第一步：离线资源准备（在有网的机器上）\n\n### 1.1 准备环境\n\n```bash\n# 在可以上网的机器上执行\nmkdir -p /k8s-offline/{packages,images,certs}\ncd /k8s-offline\n```\n\n### 1.2 下载 Kubernetes 组件\n\n```bash\n# 下载 kubeadm, kubelet, kubectl (ARM64)\nVERSION=1.28.0\nARCH=arm64\n\n# 方法 1：从 k8s 官方下载\nwget https://pkgs.k8s.io/core:/stable:/v${VERSION}/deb/pool/main/k/kubeadm/kubeadm_${VERSION}-00_arm64.deb\nwget https://pkgs.k8s.io/core:/stable:/v${VERSION}/deb/pool/main/k/kubelet/kubelet_${VERSION}-00_arm64.deb\nwget https://pkgs.k8s.io/core:/stable:/v${VERSION}/deb/pool/main/k/kubectl/kubectl_${VERSION}-00_arm64.deb\n\n# 方法 2：使用 apt download（推荐）\nsudo apt update\nsudo apt download kubeadm=${VERSION}-00 kubelet=${VERSION}-00 kubectl=${VERSION}-00\n\n# 下载依赖包\nsudo apt download -d --no-install kubeadm=${VERSION}-00 kubelet=${VERSION}-00 kubectl=${VERSION}-00\n\n# 移动到离线目录\nsudo cp /var/cache/apt/archives/*.deb ./packages/\n```\n\n### 1.3 下载容器运行时\n\n```bash\n# 下载 containerd 及其依赖\nsudo apt download -d --no-install containerd.io\n\n# 或者手动下载\nwget https://github.com/containerd/con"
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "LangChain 与 LangGraph 深度解析",
     "description": "从基础到进阶，全面掌握 LangChain 框架和 LangGraph 状态机，构建复杂的 AI Agent 工作流。",
     "slug": "/blog/langchain-langgraph-tutorial/",
@@ -44,32 +40,6 @@
       "工作流",
       "AI 工程"
     ],
-    "content": "\n# LangChain 与 LangGraph 深度解析\n\n本文将深入探讨 LangChain 框架和 LangGraph 状态机，从基础概念到高级应用，帮助你构建复杂、可维护的 AI Agent 系统。\n\n## 为什么需要 LangChain 和 LangGraph？\n\n### 传统 LLM 应用的局限性\n\n直接使用 LLM 面临以下挑战：\n\n- **状态管理困难** — 多轮对话难以维护上下文\n- **工作流复杂** — 多步骤任务编排混乱\n- **可观测性差** — 难以调试和监控\n- **缺乏循环** — 无法实现迭代优化\n- **人类介入难** — 难以实现人机协作\n\n### LangChain 的解决方案\n\n**LangChain** 提供了：\n- 📦 **模块化组件** — 链、提示词、记忆、工具\n- 🔗 **编排能力** — 将多个组件串联\n- 🧠 **记忆管理** — 维护对话历史\n- 🛠️ **工具集成** — 连接外部 API 和数据源\n\n### LangGraph 的进阶能力\n\n**LangGraph** 在 LangChain 基础上增加了：\n- 🔄 **循环工作流** — 支持迭代和重试\n- 🎯 **状态机** — 明确的状态转换\n- 👥 **人机协作** — 人类审核和干预\n- 📊 **可视化** — 工作流图可视化\n- 💾 **持久化** — 检查点和恢复\n\n## LangChain 核心概念\n\n### 1. 链 (Chains)\n\n链是 LangChain 的基本构建块，将多个组件串联起来。\n\n```python\nfrom langchain.llms import OpenAI\nfrom langchain.prompts import PromptTemplate\nfrom langchain.chains import LLMChain\n\n# 创建提示模板\nprompt = PromptTemplate(\n    input_variables=[\"topic\"],\n    template=\"请写一篇关于 {topic} 的短文，不超过 200 字。\"\n)\n\n# 创建 LLM\nllm = OpenAI(temperature=0.7)\n\n# 创建链\nchain = LLMChain(llm=llm, prompt=prompt)\n\n# 执行\nresult = chain.run(\"人工智能\")\nprint(result)\n```\n\n### 2. 提示词管理 (Prompts)\n\n```python\nfrom langchain.prompts import ChatPromptTemplate, MessagesPlaceholder\n\n# 聊天提示模板\nprompt = ChatPromptTemplate.from_messages([\n    (\"system\", \"你是一个有帮助的助手。\"),\n    MessagesPlaceholder(\"chat_history\"),  # 对话历史\n    (\"human\", \"{input}\")  # 用户输入\n])\n\n# 格式化提示\nmessages = prompt.format_messages(\n    chat_history=[...],\n    input=\"你好\"\n)\n```\n\n### 3. 记忆 (Memory)\n\n记忆组件维护对话历史，实现多轮对话。\n\n```python\nfrom langchain.memory import ConversationBufferMemory\nfrom langchain.chains import ConversationChain\n\n# 创建带记忆的链\nmemory = ConversationBufferMemory(\n    memory_key=\"chat_history\",\n    return_messages=True\n)\n\nconversation = ConversationChain(\n    llm=llm,\n    memory=memory,\n    verbose=True\n)\n\n# 多轮对话\nconversation.predict(input=\"我叫 Edward\")\nconversation.predict(input=\"我做什么工作的？\")\n```\n\n**记忆类型对比：**\n\n| 类型 | 说明 | 适用场景 |\n|------|------|----------|\n| ConversationBufferMemory | 存储所有历史消息 | 简单对话 |\n| ConversationBufferWindowMemory"
-  },
-  {
-    "id": 3,
-    "title": "Obsidian 同步测试",
-    "description": "测试从 Obsidian 直接写作并同步到博客",
-    "slug": "/blog/test-post/",
-    "published": "2026-05-14T00:00:00.000Z",
-    "tags": [
-      "Obsidian",
-      "工作流",
-      "测试"
-    ],
-    "content": "\n# Obsidian 同步测试\n\n这是一篇从 Obsidian 直接写作的测试文章。\n\n## 功能验证\n\n- [x] 在 Obsidian 中创建文章\n- [x] 自动同步到博客\n- [x] Frontmatter 正确解析\n- [x] Markdown 内容渲染\n\n## 使用方法\n\n1. 在 Obsidian 的 `05-Blog` 文件夹中创建 `.md` 文件\n2. 添加 frontmatter（标题、描述、日期、标签）\n3. 写作内容\n4. 博客自动识别并渲染\n\n---\n\n**自动同步时间**: 2026-05-14\n"
-  },
-  {
-    "id": 4,
-    "title": "AI Agent 工作流实践",
-    "description": "探索如何使用 AI Agent 自动化日常开发任务，提升工作效率。",
-    "slug": "/blog/ai-agent-workflow/",
-    "published": "2025-05-08T00:00:00.000Z",
-    "tags": [
-      "AI",
-      "自动化",
-      "生产力"
-    ],
-    "content": "\n# AI Agent 工作流实践\n\n探索如何使用 AI Agent 自动化日常开发任务，提升工作效率。\n\n## 什么是 AI Agent？\n\nAI Agent 是一种能够自主执行任务的智能系统，它可以：\n\n- **理解自然语言指令**\n- **调用工具和 API**\n- **执行多步骤任务**\n- **自主决策和规划**\n\n## 使用场景\n\n### 1. 代码开发\n\n```typescript\n// 使用 AI Agent 生成代码\nconst code = await agent.generate({\n  prompt: \"创建一个 React 组件，实现待办事项列表\",\n  language: \"typescript\"\n});\n```\n\n### 2. 自动化测试\n\n```bash\n# AI 自动生成测试用例\nnpm test -- --ai-generate\n```\n\n### 3. 文档生成\n\n```markdown\n# 自动生成 API 文档\n\n基于代码注释和类型定义，AI 可以自动生成完整的 API 文档。\n```\n\n## 最佳实践\n\n### 1. 明确指令\n\n给 AI Agent 的指令应该：\n- 清晰明确\n- 包含必要的上下文\n- 指定期望的输出格式\n\n### 2. 错误处理\n\n```typescript\ntry {\n  const result = await agent.execute(task);\n} catch (error) {\n  // 提供详细的错误信息\n  await agent.retry(task, { maxRetries: 3 });\n}\n```\n\n### 3. 性能优化\n\n- 缓存常用结果\n- 批量处理任务\n- 使用异步操作\n\n## 工具推荐\n\n| 工具 | 用途 | 链接 |\n|------|------|------|\n| Hermes Agent | 通用 AI 助手 | [GitHub](https://github.com) |\n| Claude Code | 代码生成 | [Anthropic](https://anthropic.com) |\n| OpenCode | 代码审查 | [OpenAI](https://openai.com) |\n\n## 总结\n\nAI Agent 正在改变我们的开发工作流，合理使用可以大幅提升效率。关键是找到合适的工具和使用场景。\n\n---\n\n**相关文章**:\n- [从零搭建 Astro 个人博客](/blog/astro-blog-setup)\n- [Docker 和 K8s 学习笔记](/blog/docker-k8s-notes)\n"
+    "content": "\n# LangChain 与 LangGraph 深度解析\n\n本文将深入探讨 LangChain 框架和 LangGraph 状态机，从基础概念到高级应用，帮助你构建复杂、可维护的 AI Agent 系统。\n\n## 为什么需要 LangChain 和 LangGraph？\n\n### 传统 LLM 应用的局限性\n\n直接使用 LLM 面临以下挑战：\n\n- **状态管理困难** — 多轮对话难以维护上下文\n- **工作流复杂** — 多步骤任务编排混乱\n- **可观测性差** — 难以调试和监控\n- **缺乏循环** — 无法实现迭代优化\n- **人类介入难** — 难以实现人机协作\n\n### LangChain 的解决方案\n\n**LangChain** 提供了：\n- 📦 **模块化组件** — 链、提示词、记忆、工具\n- 🔗 **编排能力** — 将多个组件串联\n- 🧠 **记忆管理** — 维护对话历史\n- 🛠️ **工具集成** — 连接外部 API 和数据源\n\n### LangGraph 的进阶能力\n\n**LangGraph** 在 LangChain 基础上增加了：\n- 🔄 **循环工作流** — 支持迭代和重试\n- 🎯 **状态机** — 明确的状态转换\n- 👥 **人机协作** — 人类审核和干预\n- 📊 **可视化** — 工作流图可视化\n- 💾 **持久化** — 检查点和恢复\n\n## LangChain 核心概念\n\n### 1. 链 (Chains)\n\n链是 LangChain 的基本构建块，将多个组件串联起来。\n\n```python\nfrom langchain.llms import OpenAI\nfrom langchain.prompts import PromptTemplate\nfrom langchain.chains import LLMChain\n\n# 创建提示模板\nprompt = PromptTemplate(\n    input_variables=[\"topic\"],\n    template=\"请写一篇关于 {topic} 的短文，不超过 200 字。\"\n)\n\n# 创建 LLM\nllm = OpenAI(temperature=0.7)\n\n# 创建链\nchain = LLMChain(llm=llm, prompt=prompt)\n\n# 执行\nresult = chain.run(\"人工智能\")\nprint(result)\n```\n\n### 2. 提示词管理 (Prompts)\n\n```python\nfrom langchain.prompts import ChatPromptTemplate, MessagesPlaceholder\n\n# 聊天提示模板\nprompt = ChatPromptTemplate.from_messages([\n    (\"system\", \"你是一个有帮助的助手。\"),\n    MessagesPlaceholder(\"chat_history\"),  # 对话历史\n    (\"human\", \"{input}\")  # 用户输入\n])\n\n# 格式化提示\nmessages = prompt.format_messages(\n    chat_history=[...],\n    input=\"你好\"\n)\n```\n\n### 3. 记忆 (Memory)\n\n记忆组件维护对话历史，实现多轮对话。\n\n```python\nfrom langchain.memory import ConversationBufferMemory\nfrom langchain.chains import ConversationChain\n\n# 创建带记忆的链\nmemory = ConversationBufferMemory(\n    memory_key=\"chat_history\",\n    return_messages=True\n)\n\nconversation = ConversationChain(\n    llm=llm,\n    memory=memory,\n    verbose=True\n)\n\n# 多轮对话\nconversation.predict(input=\"我叫 Edward\")\nconversation.predict(input=\"我做什么工作的？\")\n```\n\n**记忆类型对比：**\n\n| 类型                             | 说明        | 适用场景        |\n| ------------------------------ | --------- | ----------- |\n| C"
   }
 ]

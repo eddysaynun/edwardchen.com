@@ -191,14 +191,6 @@
   height: 12px;
 }
 
-/* 移动端常驻显示 */
-@media (max-width: 768px) {
-  .markdown-body pre .copy-code-btn {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
 /* Toast 提示 */
 .code-copy-toast {
   position: fixed;
@@ -240,28 +232,16 @@
   }
 
   .markdown-body pre .copy-code-btn {
-    /* 移动端常驻显示 */
     opacity: 1;
     visibility: visible;
-    /* 更大的点击区域 */
-    padding: 0.5rem 0.875rem;
-    font-size: 13px;
-    /* 移到右上角，不遮挡代码 */
     top: 0.5rem;
     right: 0.5rem;
   }
 
-  .markdown-body pre:hover .copy-code-btn {
-    /* 移动端不需要悬停效果 */
-  }
-
   .code-copy-toast {
     bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
     padding: 0.625rem 1.25rem;
     font-size: 12px;
-    width: auto;
     max-width: calc(100% - 2rem);
   }
 
