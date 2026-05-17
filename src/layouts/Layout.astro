@@ -28,14 +28,6 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
     <link rel="stylesheet" href="/styles/markdown.css" />
   </head>
   <body>
-    <!-- 代码复制 Toast 提示 -->
-    <div id="code-copy-toast" class="code-copy-toast" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-      <span>代码已复制！</span>
-    </div>
-
     <div class="wrap">
       <!-- Header -->
       <header class="site">
@@ -182,13 +174,34 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
         
         // 显示 Toast 提示
         function showToast() {
-          const toast = document.getElementById('code-copy-toast');
-          if (toast) {
-            toast.classList.add('show');
-            setTimeout(() => {
-              toast.classList.remove('show');
-            }, 2000);
+          // 动态创建 Toast 元素
+          let toast = document.getElementById('code-copy-toast');
+          
+          if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'code-copy-toast';
+            toast.className = 'code-copy-toast';
+            toast.setAttribute('aria-hidden', 'true');
+            toast.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>代码已复制！</span>
+            `;
+            document.body.appendChild(toast);
           }
+          
+          toast.classList.add('show');
+          
+          setTimeout(() => {
+            toast.classList.remove('show');
+            // 2 秒后从 DOM 中移除
+            setTimeout(() => {
+              if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+              }
+            }, 300);
+          }, 2000);
         }
         
         // 初始化代码复制
