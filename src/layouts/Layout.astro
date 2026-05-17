@@ -28,6 +28,14 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
     <link rel="stylesheet" href="/styles/markdown.css" />
   </head>
   <body>
+    <!-- 代码复制 Toast 提示 -->
+    <div id="code-copy-toast" class="code-copy-toast" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span>代码已复制！</span>
+    </div>
+
     <div class="wrap">
       <!-- Header -->
       <header class="site">
@@ -117,14 +125,6 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- 代码复制 Toast 提示 -->
-    <div id="code-copy-toast" class="code-copy-toast">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-      <span>代码已复制！</span>
     </div>
 
     <script>
