@@ -1,18 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import T from '../components/T.astro';
 import { getCollection } from 'astro:content';
 import { sortPostsByPinnedAndDate } from '../utils/posts';
-import { t, getCurrentLang } from '../utils/i18n';
+import { t, DEFAULT_LANG } from '../utils/i18n';
 
-const lang = getCurrentLang(false);
+const lang = DEFAULT_LANG;
 
-// 获取所有博客文章
-const allPostsRaw = await getCollection('blog');
-
-// 使用工具函数排序
-const allPosts = sortPostsByPinnedAndDate(allPostsRaw);
-
-// 获取最新的 3 篇文章（优先展示置顶）
+const allPosts = sortPostsByPinnedAndDate(await getCollection('blog'));
 const latestPosts = allPosts.slice(0, 3);
 ---
 
@@ -21,26 +16,26 @@ const latestPosts = allPosts.slice(0, 3);
   <section class="hero rise">
     <div class="meta">
       <span class="dot"></span>
-      <span>{t('home.meta', lang)}</span>
+      <T tkey="home.meta" />
     </div>
-    
+
     <h1>
-      {t('home.greeting', lang)} <em>Edward</em>
+      <T tkey="home.greeting" /> <em>Edward</em>
     </h1>
-    
+
     <p class="lede">
-      {t('home.lede', lang)}
+      <T tkey="home.lede" />
     </p>
-    
+
     <div class="links">
       <a href="/blog">
-        {t('home.readPosts', lang)}
+        <T tkey="home.readPosts" />
         <svg viewBox="0 0 13 13" fill="none">
           <path d="M2.5 6.5H10.5M10.5 6.5L7 3M10.5 6.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
       <a href="/projects">
-        {t('home.viewProjects', lang)}
+        <T tkey="home.viewProjects" />
         <svg viewBox="0 0 13 13" fill="none">
           <path d="M2.5 6.5H10.5M10.5 6.5L7 3M10.5 6.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -57,8 +52,8 @@ const latestPosts = allPosts.slice(0, 3);
   <!-- Latest Posts -->
   <section class="sec rise d1">
     <div class="sec-head">
-      <h2>{t('home.latestPosts', lang)}</h2>
-      <span class="aux"><a href="/blog">{t('home.viewAll', lang)}</a></span>
+      <h2><T tkey="home.latestPosts" /></h2>
+      <span class="aux"><a href="/blog"><T tkey="home.viewAll" /></a></span>
     </div>
 
     <ol class="posts">
@@ -89,8 +84,8 @@ const latestPosts = allPosts.slice(0, 3);
   <!-- Projects -->
   <section class="sec rise d2">
     <div class="sec-head">
-      <h2>{t('home.projects', lang)}</h2>
-      <span class="aux"><a href="/projects">{t('home.viewAll', lang)}</a></span>
+      <h2><T tkey="home.projects" /></h2>
+      <span class="aux"><a href="/projects"><T tkey="home.viewAll" /></a></span>
     </div>
 
     <div class="projects">
@@ -151,7 +146,7 @@ const latestPosts = allPosts.slice(0, 3);
   <!-- Now Page -->
   <section class="sec rise d3">
     <div class="sec-head">
-      <h2>{t('home.now', lang)}</h2>
+      <h2><T tkey="home.now" /></h2>
     </div>
 
     <div class="now">

@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/markdown.css';
 import CopyCode from '../components/CopyCode.astro';
 import Tweaks from '../components/Tweaks.astro';
+import T from '../components/T.astro';
 
 interface Props {
   title: string;
@@ -13,7 +14,7 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
 ---
 
 <!doctype html>
-<html lang="zh">
+<html lang="zh-CN" data-lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,7 +23,30 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    
+
+    <!-- 在首次 paint 前同步主题 + 语言，避免闪烁 -->
+    <script is:inline>
+      (function() {
+        const root = document.documentElement;
+        const theme = localStorage.getItem('edwardchen-theme');
+        if (theme === 'auto' || !theme) {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        } else {
+          root.setAttribute('data-theme', theme);
+        }
+        const typeface = localStorage.getItem('edwardchen-typeface');
+        if (typeface) root.setAttribute('data-typeface', typeface);
+        const density = localStorage.getItem('edwardchen-density');
+        if (density) root.setAttribute('data-density', density);
+        const lang = localStorage.getItem('edwardchen-lang');
+        if (lang === 'zh-CN' || lang === 'en') {
+          root.setAttribute('data-lang', lang);
+          root.setAttribute('lang', lang);
+        }
+      })();
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -40,11 +64,11 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
           </a>
           
           <nav class="top">
-            <a href="/" class={Astro.url.pathname === '/' || Astro.url.pathname === '/index.html' ? 'active' : ''}>首页</a>
-            <a href="/blog" class={Astro.url.pathname === '/blog' || Astro.url.pathname.startsWith('/blog/') ? 'active' : ''}>文章</a>
-            <a href="/tags" class={Astro.url.pathname === '/tags' || Astro.url.pathname.startsWith('/tags/') ? 'active' : ''}>标签</a>
-            <a href="/projects" class={Astro.url.pathname === '/projects' || Astro.url.pathname.startsWith('/projects/') ? 'active' : ''}>项目</a>
-            <a href="/about" class={Astro.url.pathname === '/about' || Astro.url.pathname.startsWith('/about/') ? 'active' : ''}>关于</a>
+            <a href="/" class={Astro.url.pathname === '/' || Astro.url.pathname === '/index.html' ? 'active' : ''}><T tkey="nav.home" /></a>
+            <a href="/blog" class={Astro.url.pathname === '/blog' || Astro.url.pathname.startsWith('/blog/') ? 'active' : ''}><T tkey="nav.blog" /></a>
+            <a href="/tags" class={Astro.url.pathname === '/tags' || Astro.url.pathname.startsWith('/tags/') ? 'active' : ''}><T tkey="nav.tags" /></a>
+            <a href="/projects" class={Astro.url.pathname === '/projects' || Astro.url.pathname.startsWith('/projects/') ? 'active' : ''}><T tkey="nav.projects" /></a>
+            <a href="/about" class={Astro.url.pathname === '/about' || Astro.url.pathname.startsWith('/about/') ? 'active' : ''}><T tkey="nav.about" /></a>
           </nav>
         </div>
       </header>
@@ -74,7 +98,7 @@ const { title, description = "Edward Chen - 构建事物的笔记" } = Astro.pro
               <polyline points="22,6 12,13 2,6"></polyline>
             </svg>
           </a>
-          <a href="/rss.xml" target="_blank" rel="noopener" aria-label="RSS 订阅">
+          <a href="/rss.xml" target="_blank" rel="noopener" aria-label="RSS">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 11a9 9 0 0 1 9 9"></path>
               <path d="M4 4a16 16 0 0 1 16 16"></path>

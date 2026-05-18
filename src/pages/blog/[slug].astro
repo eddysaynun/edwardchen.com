@@ -1,11 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import T from '../../components/T.astro';
 import { getCollection } from 'astro:content';
 import Giscus from '../../components/Giscus.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
-import { t, getCurrentLang } from '../../utils/i18n';
+import { t, DEFAULT_LANG } from '../../utils/i18n';
 
-const lang = getCurrentLang(false);
+const lang = DEFAULT_LANG;
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -71,11 +72,11 @@ const nextPost = sortedPosts[postIndex - 1];
           {post.data.pubDate?.toLocaleDateString(lang, { year: 'numeric', month: '2-digit', day: '2-digit' }) || t('common.unpublished', lang)}
         </time>
         <span>•</span>
-        <span>{t('post.readTime', lang, { minutes: Math.max(1, Math.ceil(post.body.length / 500)) })}</span>
+        <T tkey="post.readTime" params={{ minutes: Math.max(1, Math.ceil(post.body.length / 500)) }} />
         {post.data.pinned && (
           <>
             <span>•</span>
-            <span class="text-accent font-medium">{t('blog.pinned', lang)}</span>
+            <span class="text-accent font-medium"><T tkey="blog.pinned" /></span>
           </>
         )}
       </div>
@@ -115,17 +116,17 @@ const nextPost = sortedPosts[postIndex - 1];
     <nav class="sec flex justify-between items-center flex-wrap gap-4">
       {prevPost ? (
         <a href={`/blog/${prevPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          ← {t('post.prev', lang, { title: prevPost.title })}
+          ← <T tkey="post.prev" params={{ title: prevPost.title }} />
         </a>
       ) : (
         <a href="/blog" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          ← {t('post.backToList', lang)}
+          ← <T tkey="post.backToList" />
         </a>
       )}
-      
+
       {nextPost && (
         <a href={`/blog/${nextPost.slug}`} class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-          {t('post.next', lang, { title: nextPost.title })} →
+          <T tkey="post.next" params={{ title: nextPost.title }} /> →
         </a>
       )}
     </nav>

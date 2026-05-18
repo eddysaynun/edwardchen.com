@@ -4,6 +4,10 @@
 
 export type Language = 'zh-CN' | 'en';
 
+export const LANGS: readonly Language[] = ['zh-CN', 'en'] as const;
+export const DEFAULT_LANG: Language = 'zh-CN';
+export const STORAGE_KEY = 'edwardchen-lang';
+
 export interface Translations {
   [key: string]: {
     [key in Language]: string;
@@ -83,6 +87,10 @@ export const translations: Translations = {
   'post.prev': { 'zh-CN': '上一篇：{title}', en: 'Previous: {title}' },
   'post.next': { 'zh-CN': '下一篇：{title}', en: 'Next: {title}' },
   'post.backToList': { 'zh-CN': '返回文章列表', en: 'Back to List' },
+
+  // 页脚
+  'footer.copyright': { 'zh-CN': '© 2026 Edward Chen', en: '© 2026 Edward Chen' },
+  'footer.rss': { 'zh-CN': 'RSS 订阅', en: 'RSS' },
 };
 
 /**

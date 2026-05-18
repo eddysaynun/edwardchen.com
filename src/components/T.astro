@@ -1,0 +1,15 @@
+---
+import { t, DEFAULT_LANG } from '../utils/i18n';
+
+interface Props {
+  tkey: string;
+  params?: Record<string, string | number>;
+  as?: keyof HTMLElementTagNameMap;
+}
+
+const { tkey, params, as: Tag = 'span' } = Astro.props;
+const initial = t(tkey, DEFAULT_LANG, params);
+const paramsAttr = params ? JSON.stringify(params) : undefined;
+---
+
+<Tag data-i18n={tkey} data-i18n-params={paramsAttr}>{initial}</Tag>

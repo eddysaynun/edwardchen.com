@@ -1,12 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import T from '../components/T.astro';
 import { getCollection } from 'astro:content';
 import { sortPostsByPinnedAndDate } from '../utils/posts';
 import Timeline from '../components/Timeline.astro';
 import Search from '../components/Search.astro';
-import { t, getCurrentLang } from '../utils/i18n';
+import { t, DEFAULT_LANG } from '../utils/i18n';
 
-const lang = getCurrentLang(false);
+const lang = DEFAULT_LANG;
 
 // 获取所有博客文章
 const allPosts = await getCollection('blog');
@@ -30,12 +31,12 @@ const allTags = Object.entries(tagCounts)
 <Layout title={t('blog.title', lang)}>
   <section class="hero rise">
     <div class="meta">
-      <span>{t('blog.meta', lang)}</span>
+      <T tkey="blog.meta" />
     </div>
-    
-    <h1>{t('nav.blog', lang)}</h1>
-    
-    <p class="lede">{t('blog.lede', lang)}</p>
+
+    <h1><T tkey="nav.blog" /></h1>
+
+    <p class="lede"><T tkey="blog.lede" /></p>
   </section>
 
   <!-- Posts List with Search and Tags -->
@@ -53,7 +54,7 @@ const allTags = Object.entries(tagCounts)
     <div class="tags-wrapper">
       <div class="tags">
         <button class="tag active" data-tag="all">
-          {t('blog.all', lang)}
+          <T tkey="blog.all" />
           <span class="ct">({posts.length})</span>
         </button>
         {allTags.map((tag, index) => (
@@ -64,8 +65,7 @@ const allTags = Object.entries(tagCounts)
         ))}
       </div>
       {allTags.length > 10 && (
-        <button id="toggle-tags" class="toggle-tags-btn" 
-                onclick="toggleTags()">
+        <button id="toggle-tags" type="button" class="toggle-tags-btn">
           <span class="show-text">展开 {allTags.length - 10} 个标签</span>
           <span class="hide-text" style="display: none;">收起</span>
         </button>
@@ -202,28 +202,27 @@ const allTags = Object.entries(tagCounts)
   </style>
 
   <script is:inline>
-    function toggleTags() {
+    (function() {
+      const toggle = document.getElementById('toggle-tags');
       const tagsContainer = document.querySelector('.tags');
-      const hiddenTags = tagsContainer ? tagsContainer.querySelectorAll('.hidden-tag') : [];
-      const showText = document.querySelector('.show-text');
-      const hideText = document.querySelector('.hide-text');
-      
-      if (hiddenTags.length > 0) {
-        // 展开
-        hiddenTags.forEach(tag => tag.classList.remove('hidden-tag'));
-        if (showText) showText.style.display = 'none';
-        if (hideText) hideText.style.display = '';
-      } else {
-        // 收起
-        const allTagButtons = tagsContainer ? tagsContainer.querySelectorAll('.tag') : [];
-        allTagButtons.forEach((tag, index) => {
-          if (index >= 10) {
-            tag.classList.add('hidden-tag');
-          }
-        });
-        if (showText) showText.style.display = '';
-        if (hideText) hideText.style.display = 'none';
-      }
-    }
+      if (!toggle || !tagsContainer) return;
+      const showText = toggle.querySelector('.show-text');
+      const hideText = toggle.querySelector('.hide-text');
+
+      toggle.addEventListener('click', () => {
+        const hidden = tagsContainer.querySelectorAll('.hidden-tag');
+        if (hidden.length > 0) {
+          hidden.forEach(t => t.classList.remove('hidden-tag'));
+          if (showText) showText.style.display = 'none';
+          if (hideText) hideText.style.display = '';
+        } else {
+          tagsContainer.querySelectorAll('.tag').forEach((t, i) => {
+            if (i >= 10) t.classList.add('hidden-tag');
+          });
+          if (showText) showText.style.display = '';
+          if (hideText) hideText.style.display = 'none';
+        }
+      });
+    })();
   </script>
 </Layout>

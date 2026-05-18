@@ -736,13 +736,13 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
 
 ## 七、后续扩展
 
-- [ ] 评论系统（Giscus）
-- [ ] 全文搜索（Pagefind）
+- [x] 评论系统（Giscus）
+- [x] 全文搜索（Pagefind）
 - [ ] 网站统计（Umami）
-- [ ] RSS 订阅
-- [ ] Tag 云图
-- [ ] 相关文章推荐
-- [ ] 多语言支持（i18n）
+- [x] RSS 订阅
+- [x] Tag 云图
+- [x] 相关文章推荐
+- [x] 多语言支持（i18n）
 
 ---
 

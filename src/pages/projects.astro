@@ -1,8 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { t, getCurrentLang } from '../utils/i18n';
+import T from '../components/T.astro';
+import { t, DEFAULT_LANG } from '../utils/i18n';
 
-const lang = getCurrentLang(false);
+const lang = DEFAULT_LANG;
 
 interface Project {
   name: string;
@@ -50,12 +51,12 @@ const projects: Project[] = [
 <Layout title={t('projects.title', lang)}>
   <section class="hero rise">
     <div class="meta">
-      <span>{t('projects.meta', lang)}</span>
+      <T tkey="projects.meta" />
     </div>
-    
-    <h1>{t('nav.projects', lang)}</h1>
-    
-    <p class="lede">{t('projects.lede', lang)}</p>
+
+    <h1><T tkey="nav.projects" /></h1>
+
+    <p class="lede"><T tkey="projects.lede" /></p>
   </section>
 
   <!-- Projects Grid -->

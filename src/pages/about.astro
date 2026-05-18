@@ -1,31 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { t, getCurrentLang } from '../utils/i18n';
+import T from '../components/T.astro';
+import { t, DEFAULT_LANG } from '../utils/i18n';
 
-const lang = getCurrentLang(false);
+const lang = DEFAULT_LANG;
 ---
 
 <Layout title={t('about.title', lang)}>
   <section class="hero rise">
     <div class="meta">
-      <span>{t('about.meta', lang)}</span>
+      <T tkey="about.meta" />
     </div>
-    
-    <h1>{t('nav.about', lang)}</h1>
+
+    <h1><T tkey="nav.about" /></h1>
   </section>
 
   <section class="sec rise d1">
     <div class="prose max-w-none">
       <p class="text-muted text-base leading-relaxed">
-        {t('about.intro1', lang)}
+        <T tkey="about.intro1" />
       </p>
-      
+
       <p class="text-muted text-base leading-relaxed">
-        {t('about.intro2', lang)}
+        <T tkey="about.intro2" />
       </p>
 
       <div class="mt-8">
-        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// {t('about.techStack', lang)}</h2>
+        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// <T tkey="about.techStack" /></h2>
         <div class="tech-stack" style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.875rem; color: var(--muted);">
           <span style="padding: 4px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; font-family: var(--mono); transition: all 0.2s; cursor: default;">Java</span>
           <span style="padding: 4px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; font-family: var(--mono); transition: all 0.2s; cursor: default;">Python</span>
@@ -38,7 +39,7 @@ const lang = getCurrentLang(false);
       </div>
 
       <div class="mt-8">
-        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// {t('about.contact', lang)}</h2>
+        <h2 class="font-mono text-xs font-medium text-muted tracking-wide mb-4">// <T tkey="about.contact" /></h2>
         <div class="links" style="display: flex; gap: 16px; flex-wrap: wrap;">
           <a href="https://github.com/eddysaynun" target="_blank" rel="noopener" aria-label="GitHub" style="display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; transition: color 0.2s; font-size: 0.875rem; white-space: nowrap;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink: 0;">

@@ -33,13 +33,21 @@
         <button class="tweak-option" data-setting="density" data-value="comfy">宽松</button>
       </div>
     </div>
+    <div class="tweak-group">
+      <span class="tweak-label">语言 / Lang</span>
+      <div class="tweak-options">
+        <button class="tweak-option active" data-setting="lang" data-value="zh-CN">中文</button>
+        <button class="tweak-option" data-setting="lang" data-value="en">EN</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-  type Setting = 'theme' | 'typeface' | 'density';
+  import { t, translations, type Language, LANGS, DEFAULT_LANG } from '../utils/i18n';
+
+  type Setting = 'theme' | 'typeface' | 'density' | 'lang';
   const STORAGE_KEY = (s: Setting) => `edwardchen-${s}`;
-  const DOM_ATTR = (s: Setting) => `data-${s}`;
 
   function applyTheme(value: string) {
     if (value === 'auto') {
@@ -48,6 +56,20 @@
     } else {
       document.documentElement.setAttribute('data-theme', value);
     }
+  }
+
+  function applyLang(value: string) {
+    const lang = (LANGS as readonly string[]).includes(value) ? (value as Language) : DEFAULT_LANG;
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+
+    document.querySelectorAll<HTMLElement>('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n!;
+      if (!translations[key]) return;
+      const raw = el.dataset.i18nParams;
+      const params = raw ? JSON.parse(raw) as Record<string, string | number> : undefined;
+      el.textContent = t(key, lang, params);
+    });
   }
 
   function setActive(setting: Setting, value: string) {
@@ -79,24 +101,20 @@
         setActive(setting, value);
         localStorage.setItem(STORAGE_KEY(setting), value);
 
-        if (setting === 'theme') {
-          applyTheme(value);
-        } else {
-          document.documentElement.setAttribute(DOM_ATTR(setting), value);
-        }
+        if (setting === 'theme') applyTheme(value);
+        else if (setting === 'lang') applyLang(value);
+        else document.documentElement.setAttribute(`data-${setting}`, value);
       });
     });
 
     // 恢复保存的偏好
-    (['theme', 'typeface', 'density'] as Setting[]).forEach(setting => {
+    (['theme', 'typeface', 'density', 'lang'] as Setting[]).forEach(setting => {
       const saved = localStorage.getItem(STORAGE_KEY(setting));
       if (!saved) return;
       setActive(setting, saved);
-      if (setting === 'theme') {
-        applyTheme(saved);
-      } else {
-        document.documentElement.setAttribute(DOM_ATTR(setting), saved);
-      }
+      if (setting === 'theme') applyTheme(saved);
+      else if (setting === 'lang') applyLang(saved);
+      else document.documentElement.setAttribute(`data-${setting}`, saved);
     });
 
     // 当用户选了 auto 时，跟随系统主题变化
