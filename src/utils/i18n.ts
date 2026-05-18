@@ -103,6 +103,7 @@ export const translations: Translations = {
   'search.clear': { 'zh-CN': '清除', en: 'Clear' },
   'search.resultsCount': { 'zh-CN': '找到 {count} 篇文章', en: '{count} posts found' },
   'search.noDescription': { 'zh-CN': '暂无描述', en: 'No description' },
+  'search.noResults': { 'zh-CN': '没有找到相关文章', en: 'No matching posts' },
   
   // 通用
   'common.unpublished': { 'zh-CN': '未发布', en: 'Unpublished' },
