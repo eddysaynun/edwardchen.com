@@ -3,7 +3,7 @@
 ---
 
 <div id="tweaks-panel" class="tweaks-panel">
-  <button class="tweaks-toggle" aria-label="自定义设置">
+  <button class="tweaks-toggle" aria-label="自定义设置" data-i18n-aria-label="settings.customize">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="3"></circle>
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -11,33 +11,33 @@
   </button>
   <div class="tweaks-menu">
     <div class="tweak-group">
-      <span class="tweak-label">主题</span>
+      <span class="tweak-label" data-i18n="settings.theme">主题</span>
       <div class="tweak-options">
-        <button class="tweak-option active" data-setting="theme" data-value="light">浅色</button>
-        <button class="tweak-option" data-setting="theme" data-value="dark">深色</button>
-        <button class="tweak-option" data-setting="theme" data-value="auto">跟随</button>
+        <button class="tweak-option active" data-setting="theme" data-value="light" data-i18n="settings.theme.light">浅色</button>
+        <button class="tweak-option" data-setting="theme" data-value="dark" data-i18n="settings.theme.dark">深色</button>
+        <button class="tweak-option" data-setting="theme" data-value="auto" data-i18n="settings.theme.auto">跟随</button>
       </div>
     </div>
     <div class="tweak-group">
-      <span class="tweak-label">字体</span>
+      <span class="tweak-label" data-i18n="settings.typeface">字体</span>
       <div class="tweak-options">
-        <button class="tweak-option active" data-setting="typeface" data-value="sans">无衬线</button>
-        <button class="tweak-option" data-setting="typeface" data-value="serif">衬线</button>
+        <button class="tweak-option active" data-setting="typeface" data-value="sans" data-i18n="settings.typeface.sans">无衬线</button>
+        <button class="tweak-option" data-setting="typeface" data-value="serif" data-i18n="settings.typeface.serif">衬线</button>
       </div>
     </div>
     <div class="tweak-group">
-      <span class="tweak-label">密度</span>
+      <span class="tweak-label" data-i18n="settings.density">密度</span>
       <div class="tweak-options">
-        <button class="tweak-option" data-setting="density" data-value="compact">紧凑</button>
-        <button class="tweak-option active" data-setting="density" data-value="normal">正常</button>
-        <button class="tweak-option" data-setting="density" data-value="comfy">宽松</button>
+        <button class="tweak-option" data-setting="density" data-value="compact" data-i18n="settings.density.compact">紧凑</button>
+        <button class="tweak-option active" data-setting="density" data-value="normal" data-i18n="settings.density.normal">正常</button>
+        <button class="tweak-option" data-setting="density" data-value="comfy" data-i18n="settings.density.comfy">宽松</button>
       </div>
     </div>
     <div class="tweak-group">
-      <span class="tweak-label">语言 / Lang</span>
+      <span class="tweak-label" data-i18n="settings.language">语言</span>
       <div class="tweak-options">
-        <button class="tweak-option active" data-setting="lang" data-value="zh-CN">中文</button>
-        <button class="tweak-option" data-setting="lang" data-value="en">EN</button>
+        <button class="tweak-option active" data-setting="lang" data-value="zh-CN" data-i18n="settings.language.zh-CN">中文</button>
+        <button class="tweak-option" data-setting="lang" data-value="en" data-i18n="settings.language.en">EN</button>
       </div>
     </div>
   </div>
@@ -70,6 +70,37 @@
       const params = raw ? JSON.parse(raw) as Record<string, string | number> : undefined;
       el.textContent = t(key, lang, params);
     });
+
+    document.querySelectorAll<HTMLElement>('[data-i18n-aria-label]').forEach(el => {
+      const key = el.dataset.i18nAriaLabel!;
+      if (translations[key]) el.setAttribute('aria-label', t(key, lang));
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-i18n-title]').forEach(el => {
+      const key = el.dataset.i18nTitle!;
+      if (!translations[key]) return;
+      const raw = el.dataset.i18nParams;
+      const params = raw ? JSON.parse(raw) as Record<string, string | number> : undefined;
+      el.setAttribute('title', t(key, lang, params));
+    });
+
+    document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-i18n-placeholder]').forEach(el => {
+      const key = el.dataset.i18nPlaceholder!;
+      if (translations[key]) el.setAttribute('placeholder', t(key, lang));
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-i18n-date]').forEach(el => {
+      const iso = el.dataset.i18nDate!;
+      const format = el.dataset.i18nDateFormat || 'default';
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return;
+      const options = format === 'month-day'
+        ? { month: 'numeric', day: 'numeric' } as Intl.DateTimeFormatOptions
+        : undefined;
+      el.textContent = date.toLocaleDateString(lang, options);
+    });
+
+    document.dispatchEvent(new CustomEvent('i18n:change', { detail: { lang } }));
   }
 
   function setActive(setting: Setting, value: string) {

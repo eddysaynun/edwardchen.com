@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import T from '../../components/T.astro';
 import { getCollection } from 'astro:content';
 import { sortPostsByPinnedAndDate } from '../../utils/posts';
+import { t, DEFAULT_LANG } from '../../utils/i18n';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -18,27 +20,28 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 const decodedTag = decodeURIComponent(tag);
+const lang = DEFAULT_LANG;
 
 const allPosts = await getCollection('blog');
 const filteredPosts = allPosts.filter(post => post.data.tags.includes(decodedTag));
 const sortedPosts = sortPostsByPinnedAndDate(filteredPosts);
 ---
 
-<Layout title={`${decodedTag} - 文章 - Edward Chen`}>
+<Layout title={`${decodedTag} - ${t('nav.blog', lang)} - Edward Chen`}>
   <section class="hero rise">
     <div class="meta">
-      <span>标签 · {decodedTag}</span>
+      <T tkey="tags.singleMeta" params={{ tag: decodedTag }} />
     </div>
     
     <h1>{decodedTag}</h1>
     
-    <p class="lede">共 {sortedPosts.length} 篇文章</p>
+    <p class="lede"><T tkey="tags.singleCount" params={{ count: sortedPosts.length }} /></p>
   </section>
 
   <!-- Back to Tags -->
   <nav class="sec rise">
     <a href="/tags" class="font-mono text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-2">
-      ← 返回标签列表
+      ← <T tkey="tags.backToList" />
     </a>
   </nav>
 
@@ -48,7 +51,7 @@ const sortedPosts = sortPostsByPinnedAndDate(filteredPosts);
       {sortedPosts.map((post) => (
         <li class={`post ${post.data.pinned ? 'pinned' : ''}`}>
           <time class="date" datetime={post.data.pubDate?.toISOString() || ''}>
-            {post.data.pubDate?.toLocaleDateString('zh-CN') || '未发布'}
+            {post.data.pubDate?.toLocaleDateString(lang) || t('common.unpublished', lang)}
             {post.data.pinned && (
               <span class="pinned-badge" title="置顶">📌</span>
             )}

@@ -42,8 +42,10 @@ const allTags = Object.entries(tagCounts)
   <!-- Posts List with Search and Tags -->
   <section class="sec rise d2">
     <div class="sec-head">
-      <h2>文章列表</h2>
-      <span class="aux">{posts.length} 篇文章</span>
+      <h2>
+        <T tkey="blog.list" />
+      </h2>
+      <span class="aux"><T tkey="tags.postCount" params={{ count: posts.length }} /></span>
     </div>
     
     <!-- Controls: Search + Tags -->
@@ -66,8 +68,8 @@ const allTags = Object.entries(tagCounts)
       </div>
       {allTags.length > 10 && (
         <button id="toggle-tags" type="button" class="toggle-tags-btn">
-          <span class="show-text">展开 {allTags.length - 10} 个标签</span>
-          <span class="hide-text" style="display: none;">收起</span>
+          <span class="show-text"><T tkey="tags.expand" params={{ count: allTags.length - 10 }} /></span>
+          <span class="hide-text" style="display: none;"><T tkey="tags.collapse" /></span>
         </button>
       )}
     </div>

@@ -1,9 +1,15 @@
 ---
+import { t, DEFAULT_LANG, translations } from '../utils/i18n';
+
 interface Props {
   placeholder?: string;
 }
 
-const { placeholder = '搜索文章...' } = Astro.props;
+const { placeholder = t('blog.searchPlaceholder', DEFAULT_LANG) } = Astro.props;
+const searchTranslations = {
+  resultsCount: translations['search.resultsCount'],
+  noDescription: translations['search.noDescription'],
+};
 ---
 
 <div class="search">
@@ -15,11 +21,13 @@ const { placeholder = '搜索文章...' } = Astro.props;
     type="text" 
     id="search-input" 
     placeholder={placeholder}
-    aria-label="搜索文章"
+    aria-label={t('blog.searchPlaceholder', DEFAULT_LANG)}
+    data-i18n-placeholder="blog.searchPlaceholder"
+    data-i18n-aria-label="blog.searchPlaceholder"
     autocomplete="off"
   />
   <span class="kchip">⏎</span>
-  <button id="clear-search" class="clear" aria-label="清除">×</button>
+  <button id="clear-search" class="clear" aria-label={t('search.clear', DEFAULT_LANG)} data-i18n-aria-label="search.clear">×</button>
 </div>
 
 <div id="search-results" class="search-results" hidden>
@@ -29,9 +37,24 @@ const { placeholder = '搜索文章...' } = Astro.props;
   <ul class="results-list"></ul>
 </div>
 
-<script is:inline>
+<script define:vars={{ searchTranslations }}>
   let index = null;
   let data = [];
+  let latestResults = [];
+  let latestQuery = '';
+
+  function getLang() {
+    const lang = document.documentElement.dataset.lang || document.documentElement.lang;
+    return lang === 'en' ? 'en' : 'zh-CN';
+  }
+
+  function translate(key, params = {}) {
+    const template = searchTranslations[key]?.[getLang()] || key;
+    return Object.entries(params).reduce(
+      (text, [name, value]) => text.replace(`{${name}}`, String(value)),
+      template
+    );
+  }
   
   async function loadIndex() {
     if (index) return;
@@ -80,7 +103,7 @@ const { placeholder = '搜索文章...' } = Astro.props;
     }
     
     resultsContainer.hidden = false;
-    resultsCount.textContent = `找到 ${results.length} 篇文章`;
+    resultsCount.textContent = translate('resultsCount', { count: results.length });
     
     resultsList.innerHTML = results.map(item => {
       const post = data[item.id];
@@ -88,9 +111,9 @@ const { placeholder = '搜索文章...' } = Astro.props;
         <li class="result-item">
           <a href="${post.slug}" class="result-link">
             <h3 class="result-title">${highlightText(post.title, query)}</h3>
-            <p class="result-description">${highlightText(post.description || '暂无描述', query)}</p>
+            <p class="result-description">${highlightText(post.description || translate('noDescription'), query)}</p>
             <div class="result-meta">
-              <time datetime="${post.published}">${new Date(post.published).toLocaleDateString('zh-CN')}</time>
+              <time datetime="${post.published}">${new Date(post.published).toLocaleDateString(getLang())}</time>
               ${post.tags.length > 0 ? `<span class="result-tags">${post.tags.slice(0, 3).map(tag => `#${tag}`).join(' ')}</span>` : ''}
             </div>
           </a>
@@ -127,6 +150,8 @@ const { placeholder = '搜索文章...' } = Astro.props;
         enrichment: true
       }).flatMap(r => r.result);
       
+      latestResults = results;
+      latestQuery = query;
       renderResults(results, query);
     }
   });
@@ -136,6 +161,12 @@ const { placeholder = '搜索文章...' } = Astro.props;
     clearBtn.style.display = 'none';
     document.getElementById('search-results').hidden = true;
     searchInput.focus();
+  });
+
+  document.addEventListener('i18n:change', () => {
+    if (latestResults.length > 0 && latestQuery) {
+      renderResults(latestResults, latestQuery);
+    }
   });
   
   // Close results when clicking outside

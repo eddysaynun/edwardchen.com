@@ -1,5 +1,7 @@
 ---
-import { sortPostsByPinnedAndDate, groupPostsByYearMonth, getYearMonthLabel } from '../utils/posts';
+import { sortPostsByPinnedAndDate, groupPostsByYearMonth } from '../utils/posts';
+import T from './T.astro';
+import { DEFAULT_LANG } from '../utils/i18n';
 
 interface Props {
   posts: {
@@ -15,6 +17,7 @@ interface Props {
 }
 
 const { posts } = Astro.props;
+const lang = DEFAULT_LANG;
 
 // 排序并分组
 const sortedPosts = sortPostsByPinnedAndDate(posts);
@@ -25,18 +28,25 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
   if (a === '未发布' || b === '未发布') return a === '未发布' ? 1 : -1;
   return b.localeCompare(a);
 });
+
 ---
 
 <aside class="timeline-side">
   <div class="tl-head">
-    <span class="ct">{posts.length} 篇文章</span>
+    <span class="ct"><T tkey="tags.postCount" params={{ count: posts.length }} /></span>
   </div>
   
   <div class="tl-rail">
     {yearMonths.map((yearMonth) => (
       <div class="tl-group" data-yearmonth={yearMonth}>
         <div class="tl-group-h">
-          <span>{getYearMonthLabel(yearMonth)}</span>
+          <span>
+            {yearMonth === '未发布' ? (
+              <T tkey="common.unpublished" />
+            ) : (
+              <T tkey="common.yearMonth" params={{ year: yearMonth.split('-')[0], month: yearMonth.split('-')[1] }} />
+            )}
+          </span>
           <span class="ct">({groupedPosts[yearMonth].length})</span>
         </div>
         
@@ -45,7 +55,11 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
             <li>
               <a href={`/blog/${post.slug}`} class={`tl-item ${post.data.pinned ? 'pinned' : ''}`}>
                 <span class="tl-d">
-                  {post.data.pubDate?.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' }) || ''}
+                  {post.data.pubDate ? (
+                    <span data-i18n-date={post.data.pubDate.toISOString()} data-i18n-date-format="month-day">
+                      {post.data.pubDate.toLocaleDateString(lang, { month: 'numeric', day: 'numeric' })}
+                    </span>
+                  ) : ''}
                 </span>
                 <span class="tl-t">{post.data.title}</span>
               </a>
@@ -214,7 +228,7 @@ const yearMonths = Object.keys(groupedPosts).sort((a, b) => {
   }
 
   .tl-item.pinned .tl-d::after {
-    content: " ✦";
+    content: " 📌";
     color: var(--accent);
   }
 

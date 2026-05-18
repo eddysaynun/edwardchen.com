@@ -1,7 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import TagCloud from '../../components/TagCloud.astro';
+import T from '../../components/T.astro';
 import { getAllTagsWithCounts, paginateTags, TAGS_PER_PAGE } from '../../utils/tags';
+import { t, DEFAULT_LANG } from '../../utils/i18n';
 
 export async function getStaticPaths() {
   const tags = await getAllTagsWithCounts();
@@ -14,44 +15,45 @@ export async function getStaticPaths() {
 
 const { page } = Astro.params;
 const currentPage = Number(page);
+const lang = DEFAULT_LANG;
 const tags = await getAllTagsWithCounts();
 const { items, totalPages, hasPrev, hasNext } = paginateTags(tags, currentPage);
 ---
 
-<Layout title={`标签云 第 ${currentPage} 页 - Edward Chen`}>
+<Layout title={t('tags.pageTitle', lang, { page: currentPage })}>
   <section class="hero rise">
     <div class="meta">
-      <span>主题 · 分类 · 索引</span>
+      <T tkey="tags.meta" />
     </div>
 
-    <h1>标签云</h1>
+    <h1><T tkey="tags.heading" /></h1>
 
-    <p class="lede">浏览所有主题，快速找到感兴趣的内容。</p>
+    <p class="lede"><T tkey="tags.lede" /></p>
   </section>
 
   <section class="sec rise d2">
     <div class="sec-head">
-      <h2>标签列表</h2>
-      <span class="aux">共 {tags.length} 个标签</span>
+      <h2><T tkey="tags.list" /></h2>
+      <span class="aux"><T tkey="tags.total" params={{ count: tags.length }} /></span>
     </div>
     <div class="tag-list">
       {items.map((tag) => (
         <a href={`/tags/${encodeURIComponent(tag.name)}`} class="tag-list-item">
           <span class="tag-name">{tag.name}</span>
-          <span class="tag-count">{tag.count} 篇文章</span>
+          <span class="tag-count"><T tkey="tags.postCount" params={{ count: tag.count }} /></span>
         </a>
       ))}
     </div>
 
-    <nav class="pagination" aria-label="标签列表分页">
+    <nav class="pagination" aria-label={t('tags.paginationLabel', lang)}>
       {hasPrev && (
         <a href={currentPage === 2 ? '/tags' : `/tags/${currentPage - 1}`} class="pagination-btn">
-          ← 上一页
+          ← <T tkey="tags.prev" />
         </a>
       )}
-      <span class="pagination-info">第 {currentPage} / {totalPages} 页</span>
+      <span class="pagination-info"><T tkey="tags.pageInfo" params={{ page: currentPage, total: totalPages }} /></span>
       {hasNext && (
-        <a href={`/tags/${currentPage + 1}`} class="pagination-btn">下一页 →</a>
+        <a href={`/tags/${currentPage + 1}`} class="pagination-btn"><T tkey="tags.next" /> →</a>
       )}
     </nav>
   </section>

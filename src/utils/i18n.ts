@@ -39,11 +39,32 @@ export const translations: Translations = {
   'blog.lede': { 'zh-CN': '记录技术探索、项目经验和学习心得。', en: 'Recording technical explorations, project experiences, and learning insights.' },
   'blog.viewAll': { 'zh-CN': '查看全部 →', en: 'View All →' },
   'blog.all': { 'zh-CN': '全部', en: 'All' },
+  'blog.list': { 'zh-CN': '文章列表', en: 'Post List' },
   'blog.timeline': { 'zh-CN': '时间线', en: 'Timeline' },
   'blog.toc': { 'zh-CN': '目录', en: 'Table of Contents' },
   'blog.pinned': { 'zh-CN': '置顶', en: 'Pinned' },
   'blog.comments': { 'zh-CN': '💬 评论', en: '💬 Comments' },
   'blog.searchPlaceholder': { 'zh-CN': '搜索文章...', en: 'Search posts...' },
+
+  // 标签
+  'tags.title': { 'zh-CN': '标签云 - Edward Chen', en: 'Tags - Edward Chen' },
+  'tags.pageTitle': { 'zh-CN': '标签云 第 {page} 页 - Edward Chen', en: 'Tags Page {page} - Edward Chen' },
+  'tags.meta': { 'zh-CN': '主题 · 分类 · 索引', en: 'Topics · Categories · Index' },
+  'tags.heading': { 'zh-CN': '标签云', en: 'Tags' },
+  'tags.lede': { 'zh-CN': '浏览所有主题，快速找到感兴趣的内容。', en: 'Browse every topic and quickly find what interests you.' },
+  'tags.list': { 'zh-CN': '标签列表', en: 'Tag List' },
+  'tags.total': { 'zh-CN': '共 {count} 个标签', en: '{count} tags' },
+  'tags.postCount': { 'zh-CN': '{count} 篇文章', en: '{count} posts' },
+  'tags.titleWithPostCount': { 'zh-CN': '{tag}: {count} 篇文章', en: '{tag}: {count} posts' },
+  'tags.singleMeta': { 'zh-CN': '标签 · {tag}', en: 'Tag · {tag}' },
+  'tags.singleCount': { 'zh-CN': '共 {count} 篇文章', en: '{count} posts' },
+  'tags.backToList': { 'zh-CN': '返回标签列表', en: 'Back to Tags' },
+  'tags.paginationLabel': { 'zh-CN': '标签列表分页', en: 'Tag list pagination' },
+  'tags.pageInfo': { 'zh-CN': '第 {page} / {total} 页', en: 'Page {page} / {total}' },
+  'tags.prev': { 'zh-CN': '上一页', en: 'Previous' },
+  'tags.next': { 'zh-CN': '下一页', en: 'Next' },
+  'tags.expand': { 'zh-CN': '展开 {count} 个标签', en: 'Show {count} more tags' },
+  'tags.collapse': { 'zh-CN': '收起', en: 'Collapse' },
   
   // 项目
   'projects.title': { 'zh-CN': '项目 - Edward Chen', en: 'Projects - Edward Chen' },
@@ -65,7 +86,7 @@ export const translations: Translations = {
   'settings.theme': { 'zh-CN': '主题', en: 'Theme' },
   'settings.theme.light': { 'zh-CN': '浅色', en: 'Light' },
   'settings.theme.dark': { 'zh-CN': '深色', en: 'Dark' },
-  'settings.theme.auto': { 'zh-CN': '跟随系统', en: 'Auto' },
+  'settings.theme.auto': { 'zh-CN': '跟随', en: 'Auto' },
   'settings.typeface': { 'zh-CN': '字体', en: 'Typeface' },
   'settings.typeface.sans': { 'zh-CN': '无衬线', en: 'Sans' },
   'settings.typeface.serif': { 'zh-CN': '衬线', en: 'Serif' },
@@ -76,6 +97,12 @@ export const translations: Translations = {
   'settings.language': { 'zh-CN': '语言', en: 'Language' },
   'settings.language.zh-CN': { 'zh-CN': '简体中文', en: '中文' },
   'settings.language.en': { 'zh-CN': 'English', en: 'English' },
+  'settings.customize': { 'zh-CN': '自定义设置', en: 'Customize settings' },
+
+  // 搜索
+  'search.clear': { 'zh-CN': '清除', en: 'Clear' },
+  'search.resultsCount': { 'zh-CN': '找到 {count} 篇文章', en: '{count} posts found' },
+  'search.noDescription': { 'zh-CN': '暂无描述', en: 'No description' },
   
   // 通用
   'common.unpublished': { 'zh-CN': '未发布', en: 'Unpublished' },

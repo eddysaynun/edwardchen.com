@@ -1,4 +1,6 @@
 ---
+import { t, DEFAULT_LANG } from '../utils/i18n';
+
 interface Props {
   tags: {
     name: string;
@@ -38,7 +40,9 @@ function getFontSize(count: number): string {
       href={`/tags/${encodeURIComponent(tag.name)}`}
       class="tag-item"
       style={{ fontSize: getFontSize(tag.count), color: getRandomColor(tag.name) }}
-      title={`${tag.name}: ${tag.count} 篇文章`}>
+      title={t('tags.titleWithPostCount', DEFAULT_LANG, { tag: tag.name, count: tag.count })}
+      data-i18n-title="tags.titleWithPostCount"
+      data-i18n-params={JSON.stringify({ tag: tag.name, count: tag.count })}>
       {tag.name}
       <span class="tag-count">({tag.count})</span>
     </a>
