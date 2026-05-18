@@ -94,8 +94,7 @@ const nextPost = sortedPosts[postIndex - 1];
           ))}
         </div>
         {post.data.tags.length > 10 && (
-          <button id="toggle-tags" class="toggle-tags-btn text-xs text-stone-600 hover:text-stone-900 mt-2" 
-                  onclick="toggleTags()">
+          <button id="toggle-tags" type="button" class="toggle-tags-btn text-xs text-stone-600 hover:text-stone-900 mt-2">
             <span class="show-text">展开 {post.data.tags.length - 10} 个标签</span>
             <span class="hide-text" style="display: none;">收起</span>
           </button>
@@ -404,29 +403,30 @@ const nextPost = sortedPosts[postIndex - 1];
   </style>
 
   <script is:inline>
-    function toggleTags() {
+    // 展开 / 收起多余标签
+    (function() {
+      const toggle = document.getElementById('toggle-tags');
       const tagsList = document.getElementById('tags-list');
-      const hiddenTags = tagsList ? tagsList.querySelectorAll('.hidden-tag') : [];
-      const showText = document.querySelector('.show-text');
-      const hideText = document.querySelector('.hide-text');
-      
-      if (hiddenTags.length > 0) {
-        // 展开
-        hiddenTags.forEach(tag => tag.classList.remove('hidden-tag'));
-        if (showText) showText.style.display = 'none';
-        if (hideText) hideText.style.display = '';
-      } else {
-        // 收起
-        const allTags = tagsList ? tagsList.querySelectorAll('a') : [];
-        allTags.forEach((tag, index) => {
-          if (index >= 10) {
-            tag.classList.add('hidden-tag');
-          }
-        });
-        if (showText) showText.style.display = '';
-        if (hideText) hideText.style.display = 'none';
-      }
-    }
+      if (!toggle || !tagsList) return;
+
+      const showText = toggle.querySelector('.show-text');
+      const hideText = toggle.querySelector('.hide-text');
+
+      toggle.addEventListener('click', () => {
+        const hidden = tagsList.querySelectorAll('.hidden-tag');
+        if (hidden.length > 0) {
+          hidden.forEach(t => t.classList.remove('hidden-tag'));
+          if (showText) showText.style.display = 'none';
+          if (hideText) hideText.style.display = '';
+        } else {
+          tagsList.querySelectorAll('a').forEach((t, i) => {
+            if (i >= 10) t.classList.add('hidden-tag');
+          });
+          if (showText) showText.style.display = '';
+          if (hideText) hideText.style.display = 'none';
+        }
+      });
+    })();
 
     // TOC 平滑滚动 + 当前章节高亮
     (function() {

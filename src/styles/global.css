@@ -542,7 +542,7 @@ ol.posts {
 }
 
 .post.pinned .date::after {
-  content: '• 置顶';
+  content: '📌';
   display: block;
   color: var(--accent);
   font-size: 10px;
