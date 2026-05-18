@@ -12,11 +12,11 @@ export async function GET(context) {
     site: context.site!,
     items: sortedPosts.map((post) => ({
       title: post.data.title,
-      pubDate: post.data.published,
+      pubDate: post.data.pubDate,
       description: post.data.description,
-      link: `/blog/${post.id}/`,
+      link: `/blog/${post.slug}/`,
       content: post.body,
-      category: post.data.tags,
+      categories: post.data.tags,
     })),
   });
 }

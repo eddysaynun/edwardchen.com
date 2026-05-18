@@ -73,16 +73,16 @@ export async function getRelatedPostsForCollection(
     title: currentPost.data.title,
     description: currentPost.data.description,
     tags: currentPost.data.tags,
-    published: currentPost.data.published,
+    published: currentPost.data.pubDate ?? new Date(0),
     slug: currentPost.slug,
   };
-  
+
   const allPostsData: PostData[] = allPosts.map(post => ({
     id: post.id,
     title: post.data.title,
     description: post.data.description,
     tags: post.data.tags,
-    published: post.data.published,
+    published: post.data.pubDate ?? new Date(0),
     slug: post.slug,
   }));
   

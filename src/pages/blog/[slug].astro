@@ -34,18 +34,9 @@ const allPostsData = (await getCollection('blog')).map(p => ({
   title: p.data.title,
   description: p.data.description,
   tags: p.data.tags,
-  published: p.data.published,
+  published: p.data.pubDate ?? new Date(0),
   slug: p.slug,
 }));
-
-const currentPostData = {
-  id: post.id,
-  title: post.data.title,
-  description: post.data.description,
-  tags: post.data.tags,
-  published: post.data.published,
-  slug: post.slug,
-};
 
 // 简单的相关文章算法：标签匹配
 const relatedPosts = post.data.tags.length > 0
@@ -55,16 +46,10 @@ const relatedPosts = post.data.tags.length > 0
         return p.tags.some(tag => post.data.tags.includes(tag));
       })
       .slice(0, 3)
-      .map(p => {
-        const pubDate = new Date(p.published);
-        return isNaN(pubDate.getTime()) 
-          ? { ...p, published: new Date() }
-          : { ...p, published: pubDate };
-      })
   : [];
 
-const sortedPosts = allPostsData.sort((a, b) => {
-  return new Date(b.published).getTime() - new Date(a.published).getTime();
+const sortedPosts = [...allPostsData].sort((a, b) => {
+  return b.published.getTime() - a.published.getTime();
 });
 
 const postIndex = sortedPosts.findIndex(p => p.id === post.id);
