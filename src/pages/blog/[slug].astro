@@ -1,13 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import rehypeStringify from 'rehype-stringify';
-import rehypeSlug from 'rehype-slug';
-import remarkGfm from 'remark-gfm';
-import { toString } from 'mdast-util-to-string';
 import Giscus from '../../components/Giscus.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 import { t, getCurrentLang } from '../../utils/i18n';
@@ -18,71 +11,34 @@ export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.slug },
+    props: { post },
   }));
 }
 
-const { slug } = Astro.params;
-const post = (await getCollection('blog')).find(p => p.slug === slug);
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
 
-if (!post) {
-  Astro.redirect('/blog');
-}
+const tocHeadings = headings.filter(h => h.depth === 2);
 
-// 使用工具函数获取相关文章
 const allPostsData = (await getCollection('blog')).map(p => ({
   id: p.id,
   title: p.data.title,
-  description: p.data.description,
   tags: p.data.tags,
+  description: p.data.description,
   published: p.data.pubDate ?? new Date(0),
   slug: p.slug,
 }));
 
-// 简单的相关文章算法：标签匹配
 const relatedPosts = post.data.tags.length > 0
   ? allPostsData
-      .filter(p => {
-        if (p.id === post.id) return false;
-        return p.tags.some(tag => post.data.tags.includes(tag));
-      })
+      .filter(p => p.id !== post.id && p.tags.some(tag => post.data.tags.includes(tag)))
       .slice(0, 3)
   : [];
 
-const sortedPosts = [...allPostsData].sort((a, b) => {
-  return b.published.getTime() - a.published.getTime();
-});
-
+const sortedPosts = [...allPostsData].sort((a, b) => b.published.getTime() - a.published.getTime());
 const postIndex = sortedPosts.findIndex(p => p.id === post.id);
 const prevPost = sortedPosts[postIndex + 1];
 const nextPost = sortedPosts[postIndex - 1];
-
-// Extract TOC from markdown using AST
-const ast = unified().use(remarkParse).parse(post.body);
-const tocHeadings = [];
-
-function extractHeadings(node) {
-  if (node.type === 'heading' && node.depth === 2) {
-    const text = toString(node);
-    tocHeadings.push({ text });
-  }
-  
-  if (node.children) {
-    node.children.forEach(extractHeadings);
-  }
-}
-
-extractHeadings(ast);
-
-// Render markdown to HTML using unified + remark
-const markdownHtml = await unified()
-  .use(remarkParse)
-  .use(remarkGfm)
-  .use(remarkRehype)
-  .use(rehypeSlug)
-  .use(rehypeStringify)
-  .process(post.body);
-
-const htmlContent = markdownHtml.value?.toString() || '';
 ---
 
 <Layout title={`${post.data.title} - Edward Chen`}>
@@ -97,7 +53,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
         <ul class="toc-list" id="toc-list">
           {tocHeadings.map((heading) => (
             <li>
-              <a href="#" class="toc-link" data-text={heading.text}>
+              <a href={`#${heading.slug}`} class="toc-link">
                 <span class="toc-t">{heading.text}</span>
               </a>
             </li>
@@ -149,7 +105,7 @@ const htmlContent = markdownHtml.value?.toString() || '';
 
     <section class="sec">
       <div class="markdown-body">
-        <div set:html={htmlContent}></div>
+        <Content />
       </div>
     </section>
 
@@ -472,53 +428,31 @@ const htmlContent = markdownHtml.value?.toString() || '';
       }
     }
 
-    // TOC 点击跳转和高亮
+    // TOC 平滑滚动 + 当前章节高亮
     (function() {
       const tocLinks = document.querySelectorAll('.toc-link');
-      
-      // 等待内容渲染完成
-      setTimeout(() => {
-        const headings = document.querySelectorAll('.markdown-body h2[id]');
-        
-        // 更新 TOC 链接的 href
-        tocLinks.forEach((link, index) => {
-          const text = link.getAttribute('data-text');
-          const heading = Array.from(headings).find(h => h.textContent.trim() === text);
-          if (heading) {
-            link.setAttribute('href', `#${heading.id}`);
-          }
-        });
+      const headings = document.querySelectorAll('.markdown-body h2[id]');
+      if (!tocLinks.length || !headings.length) return;
 
-        // 点击跳转
+      tocLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          const target = document.getElementById(targetId);
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        headings.forEach(heading => {
+          const rect = heading.getBoundingClientRect();
+          if (rect.top <= 100 && rect.bottom >= 100) current = heading.id;
+        });
         tocLinks.forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href').substring(1);
-            const target = document.getElementById(targetId);
-            if (target) {
-              target.scrollIntoView({ behavior: 'smooth' });
-            }
-          });
+          link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
         });
-
-        // 滚动时高亮当前章节
-        window.addEventListener('scroll', () => {
-          let current = '';
-          headings.forEach(heading => {
-            const rect = heading.getBoundingClientRect();
-            if (rect.top <= 100 && rect.bottom >= 100) {
-              current = heading.id;
-            }
-          });
-
-          tocLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-              link.classList.add('active');
-            }
-          });
-        });
-      }, 100);
+      });
     })();
   </script>
 </Layout>
